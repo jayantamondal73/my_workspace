@@ -1,0 +1,3324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0e0f13">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="My Workspace">
+<title>My Workspace — Jayanta Mondal</title>
+<link rel="manifest" id="pwa-manifest">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+/* ── Themes ──────────────────────────────────────────────────── */
+:root,[data-theme="teal"]{--bg:#0e0f13;--surface:#16181f;--surface2:#1d1f28;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#e8e9f0;--muted:#676a7a;--teal:#2de0b0;--amber:#f5c842;--coral:#ff6b5b;--blue:#5b9cf6;--purple:#a78bfa;--green:#4ade80;--accent:var(--teal);--fd:'DM Sans',sans-serif;--fb:'DM Sans',sans-serif;--st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px)}
+[data-theme="amber"]{--bg:#12100a;--surface:#1c1810;--surface2:#252016;--border:rgba(255,220,100,0.09);--border2:rgba(255,220,100,0.17);--text:#f0ead8;--muted:#7a6f55;--teal:#f5a623;--amber:#f5c842;--coral:#ff6b5b;--blue:#7ec8e3;--purple:#c4a8ff;--green:#88d498;--accent:var(--teal)}
+[data-theme="purple"]{--bg:#0d0b14;--surface:#161228;--surface2:#1d1835;--border:rgba(167,139,250,0.1);--border2:rgba(167,139,250,0.2);--text:#eae8f5;--muted:#6b6585;--teal:#a78bfa;--amber:#f5c842;--coral:#ff6b8a;--blue:#7ec3f8;--purple:#c4b5fd;--green:#6ee7b7;--accent:var(--teal)}
+[data-theme="light"]{--bg:#eef0f4;--surface:#ffffff;--surface2:#e4e7ed;--border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.18);--text:#1a1d27;--muted:#7a8499;--teal:#0b8f70;--amber:#b8860b;--coral:#c93a28;--blue:#1e4fcf;--purple:#6228c7;--green:#166f34;--accent:var(--teal)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%;height:-webkit-fill-available}
+body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--fb);font-size:15px;line-height:1.5;overscroll-behavior:none}
+.app{display:flex;flex-direction:column;height:var(--app-h,100vh);}
+.status-bar{height:var(--st);background:var(--bg);flex-shrink:0}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 9px;flex-shrink:0;border-bottom:1px solid var(--border);background:var(--bg)}
+.topbar-logo{font-family:'Poppins',sans-serif;font-size:17px;font-weight:700;letter-spacing:0;line-height:1.15;white-space:nowrap}
+.topbar-logo .name{color:var(--text)}
+.topbar-logo .accent{color:var(--teal)}
+.topbar-date{font-size:11px;color:var(--muted);background:var(--surface2);padding:4px 10px;border-radius:20px;border:1px solid var(--border)}
+.topbar-icon-btn{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:5px 8px;font-size:16px;cursor:pointer;line-height:1;transition:all .15s}
+.topbar-icon-btn:active{opacity:.7;transform:scale(.92)}
+/* Theme swatches */
+.theme-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:4px 0 8px}
+.theme-swatch{border-radius:14px;padding:14px;cursor:pointer;border:2px solid transparent;transition:all .2s;user-select:none}
+.theme-swatch:active{transform:scale(.97)}
+.theme-swatch.selected{border-color:var(--teal)}
+.ts-preview{height:28px;border-radius:8px;margin-bottom:8px;display:flex;gap:4px;align-items:center;padding:0 8px}
+.ts-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ts-name{font-family:var(--fd);font-size:12px;font-weight:800}
+.ts-desc{font-size:10px;opacity:.6;margin-top:2px}
+.scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding:16px 14px 24px}
+.scroll-area::-webkit-scrollbar{display:none}
+.bottom-nav{display:flex;background:var(--surface);border-top:1px solid var(--border);padding-bottom:var(--sb);flex-shrink:0}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px 6px;cursor:pointer;transition:all .15s;position:relative;gap:3px;user-select:none;-webkit-user-select:none}
+.nav-item:active{opacity:.7;transform:scale(.95)}
+.nav-icon{font-size:20px;line-height:1}
+.nav-label{font-size:10px;color:var(--muted);font-weight:500;transition:color .15s}
+.nav-item.active .nav-label{color:var(--teal)}
+.nav-dot{position:absolute;top:6px;right:calc(50% - 14px);width:7px;height:7px;border-radius:50%;background:var(--coral);display:none}
+.nav-dot.visible{display:block}
+.panel{display:none;animation:slideUp .22s ease}
+.panel.active{display:block}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.greeting{margin-bottom:18px}
+.greeting h1{font-family:var(--fb);font-size:18px;font-weight:700;letter-spacing:-0.3px;line-height:1.3}
+.greeting p{font-size:13px;color:var(--muted);margin-top:4px}
+.s-label{font-size:10px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;margin-top:20px}
+.s-label:first-child{margin-top:0}
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat-card{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px}
+.stat-label{font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:500;letter-spacing:0.2px}
+.stat-value{font-family:var(--fb);font-size:26px;font-weight:700;letter-spacing:-0.5px;line-height:1.1}
+.c-teal{color:var(--teal)}.c-amber{color:var(--amber)}.c-coral{color:var(--coral)}.c-blue{color:var(--blue)}.c-green{color:var(--green)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:16px;margin-bottom:12px}
+.card-title{font-family:var(--fd);font-size:14px;font-weight:700;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.field{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:11px 14px;font-size:14px;color:var(--text);font-family:var(--fb);outline:none;margin-bottom:8px;-webkit-appearance:none;appearance:none;transition:border-color .2s}
+.field:focus{border-color:var(--teal)}
+.field-row{display:flex;gap:8px}
+.field-row .field{margin-bottom:0}
+textarea.field{resize:none;min-height:80px}
+select.field{cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:11px 18px;border-radius:10px;font-size:14px;font-weight:500;font-family:var(--fb);cursor:pointer;border:none;transition:all .15s;white-space:nowrap}
+.btn:active{transform:scale(.97);opacity:.85}
+.btn-full{width:100%}
+.btn-teal{background:rgba(45,224,176,.14);color:var(--teal);border:1px solid rgba(45,224,176,.28)}
+.btn-amber{background:rgba(245,200,66,.14);color:var(--amber);border:1px solid rgba(245,200,66,.28)}
+.btn-coral{background:rgba(255,107,91,.14);color:var(--coral);border:1px solid rgba(255,107,91,.28)}
+.btn-blue{background:rgba(91,156,246,.14);color:var(--blue);border:1px solid rgba(91,156,246,.28)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border2)}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:8px}
+.list-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.list-item:last-child{border-bottom:none}
+.list-main{flex:1;min-width:0}
+.list-title{font-size:14px;line-height:1.4;word-break:break-word}
+.list-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.list-title.done{text-decoration:line-through;color:var(--muted)}
+.check{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border2);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:1px}
+.check.done{background:var(--teal);border-color:var(--teal)}
+.check.done::after{content:'✓';font-size:12px;color:#000;font-weight:700}
+.del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;line-height:1;padding:0 2px;flex-shrink:0;transition:color .15s}
+.del:active{color:var(--coral)}
+.badge{display:inline-block;font-size:11px;padding:3px 8px;border-radius:20px;font-weight:500;flex-shrink:0}
+.b-teal{background:rgba(45,224,176,.12);color:var(--teal)}
+.b-amber{background:rgba(245,200,66,.12);color:var(--amber)}
+.b-coral{background:rgba(255,107,91,.12);color:var(--coral)}
+.b-blue{background:rgba(91,156,246,.12);color:var(--blue)}
+.b-gray{background:var(--surface2);color:var(--muted)}
+.b-green{background:rgba(74,222,128,.12);color:var(--green)}
+.empty{text-align:center;padding:28px 16px;color:var(--muted);font-size:14px}
+.empty-icon{font-size:32px;margin-bottom:8px}
+.fee-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);gap:10px}
+.fee-row:last-child{border-bottom:none}
+.fee-info{flex:1;min-width:0}
+.fee-name{font-size:14px;font-weight:500}
+.fee-detail{font-size:12px;color:var(--muted);margin-top:2px}
+.fee-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.fee-amount{font-size:13px;font-weight:500}
+.energy-row{display:flex;gap:8px;flex-wrap:wrap}
+.energy-pill{flex:1;min-width:80px;padding:10px 8px;border-radius:10px;font-size:13px;font-weight:500;text-align:center;cursor:pointer;border:1px solid var(--border2);background:var(--surface2);color:var(--muted);transition:all .15s;font-family:var(--fb)}
+.energy-pill.ah{background:rgba(45,224,176,.14);color:var(--teal);border-color:rgba(45,224,176,.3)}
+.energy-pill.am{background:rgba(245,200,66,.14);color:var(--amber);border-color:rgba(245,200,66,.3)}
+.energy-pill.al{background:rgba(255,107,91,.14);color:var(--coral);border-color:rgba(255,107,91,.3)}
+.pri-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:7px}
+.pri-urgent{background:var(--coral)}.pri-normal{background:var(--blue)}.pri-low{background:var(--muted)}
+.trade-row{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid var(--border)}
+.trade-row:last-child{border-bottom:none}
+.install-bar{display:none;background:rgba(45,224,176,.08);border:1px solid rgba(45,224,176,.2);border-radius:14px;padding:14px 16px;margin-bottom:14px;align-items:center;gap:12px}
+.install-bar.show{display:flex}
+.install-bar .it{flex:1;font-size:13px}
+.install-bar strong{display:block;font-size:14px;margin-bottom:2px;color:var(--teal)}
+
+/* ═══════════════════════════════════════════════
+   MARKET v2 — New styles
+═══════════════════════════════════════════════ */
+
+/* Inner tab bar */
+.mkt-tabs{display:flex;gap:5px;margin-bottom:16px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:5px}
+.mkt-tab{flex:1;padding:9px 4px;border-radius:10px;font-size:12px;font-weight:700;font-family:var(--fd);cursor:pointer;border:none;background:transparent;color:var(--muted);transition:all .2s;letter-spacing:0;white-space:nowrap;user-select:none}
+.mkt-tab:active{opacity:.7}
+.mkt-tab.active{background:rgba(245,200,66,.18);color:var(--amber);box-shadow:0 2px 8px rgba(245,200,66,.12)}
+
+/* Panes */
+.mkt-pane{display:none}
+.mkt-pane.active{display:block;animation:slideUp .2s ease}
+
+/* Overview card at person level */
+.ov-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:0 16px;margin-bottom:12px}
+.ov-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);gap:8px}
+.ov-row:last-child{border-bottom:none}
+.ov-label{font-size:13px;color:var(--muted);flex-shrink:0}
+.ov-val-big{font-family:var(--fd);font-size:22px;font-weight:800;color:var(--amber)}
+.ov-val{text-align:right}
+
+/* Broker accordion card */
+.broker-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-bottom:10px;overflow:hidden;transition:border-color .25s}
+.broker-card.open{border-color:rgba(245,200,66,.35)}
+.broker-head{display:flex;align-items:center;padding:14px;gap:10px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.broker-head:active{opacity:.75}
+.broker-name-area{flex:1;min-width:0}
+.broker-name{font-family:var(--fd);font-size:14px;font-weight:700;display:flex;align-items:center;gap:5px;flex-wrap:wrap;letter-spacing:0}
+.broker-edit-btn{font-size:12px;opacity:.35;cursor:pointer;transition:opacity .15s;flex-shrink:0;padding:2px 5px;border-radius:4px;background:none;border:none;color:var(--text);line-height:1}
+.broker-edit-btn:active{opacity:1}
+.broker-meta{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4}
+.broker-chevron{font-size:20px;color:var(--muted);transition:transform .25s;flex-shrink:0;line-height:1}
+.broker-card.open .broker-chevron{transform:rotate(180deg);color:var(--amber)}
+.broker-body{display:none;border-top:1px solid var(--border);padding:14px}
+.broker-card.open .broker-body{display:block}
+
+/* Rows inside broker body */
+.b-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);gap:8px}
+.b-row:last-child{border-bottom:none}
+.b-row-label{font-size:12px;color:var(--muted);font-weight:500;flex-shrink:0}
+.b-inv-val{font-family:var(--fd);font-size:17px;font-weight:800;color:var(--amber);cursor:pointer;padding:4px 10px;border-radius:8px;background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.15);transition:background .15s}
+.b-inv-val:active{background:rgba(245,200,66,.2)}
+.b-edit-hint{font-size:9px;color:var(--muted);margin-left:4px}
+
+/* Yes/No toggle */
+.tog-pair{display:flex;gap:4px}
+.tog-btn{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:var(--surface2);color:var(--muted);transition:all .15s;font-family:var(--fb);user-select:none}
+.tog-btn:active{transform:scale(.94)}
+.tog-yes.sel{background:rgba(74,222,128,.14);color:var(--green);border-color:rgba(74,222,128,.35)}
+.tog-no.sel{background:rgba(255,107,91,.14);color:var(--coral);border-color:rgba(255,107,91,.35)}
+
+/* Section header inside broker */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin:16px 0 8px}
+.sec-title{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+
+/* Positions */
+.pos-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+.pos-item:last-child{border-bottom:none}
+.pos-type-badge{font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;flex-shrink:0;letter-spacing:.5px}
+.pos-long{background:rgba(74,222,128,.15);color:var(--green)}
+.pos-short{background:rgba(255,107,91,.15);color:var(--coral)}
+.pos-info{flex:1;min-width:0}
+.pos-stock{font-size:13px;font-weight:700;letter-spacing:.3px}
+.pos-detail{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* Expiry items */
+.exp-item{display:flex;align-items:flex-start;gap:8px;padding:9px 0;border-bottom:1px solid var(--border)}
+.exp-item:last-child{border-bottom:none}
+.exp-days-badge{font-size:10px;font-weight:800;padding:4px 8px;border-radius:7px;flex-shrink:0;margin-top:1px;white-space:nowrap;letter-spacing:.3px;min-width:52px;text-align:center}
+/* 4-tier warning system: >3m green | >2m blue | >1m yellow | ≤1m red | expired gray */
+.exp-c-green{background:rgba(74,222,128,.18);color:#4ade80;border:1px solid rgba(74,222,128,.3)}
+.exp-c-blue{background:rgba(91,156,246,.18);color:#5b9cf6;border:1px solid rgba(91,156,246,.3)}
+.exp-c-yellow{background:rgba(245,200,66,.2);color:#f5c842;border:1px solid rgba(245,200,66,.35)}
+.exp-c-red{background:rgba(255,107,91,.2);color:#ff6b5b;border:1px solid rgba(255,107,91,.35)}
+.exp-expired{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
+.exp-info{flex:1;min-width:0}
+.exp-name{font-size:13px;font-weight:500;word-break:break-word;line-height:1.4}
+.exp-meta{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4}
+/* Expiry pill inside position row */
+.pos-exp-pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;margin-top:4px;letter-spacing:.3px}
+
+/* Person summary cards on summary tab */
+.person-sum-card{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
+.person-sum-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.person-sum-name{font-family:var(--fd);font-size:15px;font-weight:700}
+.person-sum-badges{display:flex;gap:5px;flex-wrap:wrap}
+
+/* Bottom sheet modal */
+.mkt-overlay{position:fixed;inset:0;background:rgba(0,0,0,0);z-index:200;pointer-events:none;transition:background .25s}
+.mkt-overlay.show{background:rgba(0,0,0,.65);pointer-events:all}
+.mkt-sheet{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-radius:22px 22px 0 0;border-top:1px solid var(--border2);z-index:201;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1)}
+.mkt-overlay.show .mkt-sheet{transform:translateY(0)}
+.mkt-sheet-handle{width:40px;height:4px;border-radius:2px;background:var(--border2);margin:12px auto 0}
+.mkt-sheet-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 12px}
+.mkt-sheet-title{font-family:var(--fd);font-size:15px;font-weight:700;flex:1;min-width:0;padding-right:8px}
+.mkt-sheet-close{background:none;border:none;color:var(--muted);font-size:26px;cursor:pointer;line-height:1;padding:0;flex-shrink:0;transition:color .15s}
+.mkt-sheet-close:active{color:var(--text)}
+.mkt-sheet-body{padding:0 16px calc(var(--sb) + 20px);overflow-y:auto;max-height:65vh}
+
+/* S-label with right content */
+.s-label-row{display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;margin-top:20px}
+.s-label-row:first-child{margin-top:0}
+
+/* Invested edit hint */
+.inv-hint{font-size:9px;color:var(--muted);font-weight:400;margin-top:1px}
+
+/* Empty state compact */
+.empty-sm{padding:12px 8px;text-align:center;color:var(--muted);font-size:13px}
+
+/* Available Fund chip inside broker head */
+.broker-fund-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(74,222,128,.13);color:var(--green);border:1px solid rgba(74,222,128,.28);cursor:pointer;transition:background .15s;white-space:nowrap;flex-shrink:0}
+.broker-fund-chip:active{background:rgba(74,222,128,.25)}
+.broker-fund-chip.zero{background:var(--surface2);color:var(--muted);border-color:var(--border)}
+
+/* Fund row inside broker body */
+.fund-val{font-family:var(--fd);font-size:17px;font-weight:800;color:var(--green);cursor:pointer;padding:4px 10px;border-radius:8px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.18);transition:background .15s}
+.fund-val:active{background:rgba(74,222,128,.2)}
+
+/* Bank balance section on person pane */
+.bank-section{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:12px}
+.bank-entry{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.bank-entry:last-child{border-bottom:none}
+.bank-entry-info{flex:1;min-width:0}
+.bank-name{font-size:13px;font-weight:600;color:var(--text)}
+.bank-acno{font-size:11px;color:var(--muted);margin-top:1px}
+.bank-bal{font-family:var(--fd);font-size:15px;font-weight:800;color:var(--blue);cursor:pointer;padding:4px 10px;border-radius:8px;background:rgba(91,156,246,.08);border:1px solid rgba(91,156,246,.18);transition:background .15s;flex-shrink:0;white-space:nowrap}
+.bank-bal:active{background:rgba(91,156,246,.2)}
+
+/* Liquid summary bar on summary tab */
+.liquid-bar{background:var(--surface);border:1px solid rgba(91,156,246,.3);border-radius:16px;padding:14px;margin-bottom:12px}
+.liquid-bar-title{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.liquid-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.liquid-row:last-child{border-bottom:none}
+.liquid-total-row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:2px solid rgba(91,156,246,.25)}
+.liquid-total-label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.liquid-total-val{font-family:var(--fd);font-size:20px;font-weight:800;color:var(--blue)}
+
+/* ── Homework Tracker ─────────────────────────────────────────── */
+.hw-class-block{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-bottom:10px;overflow:hidden}
+.hw-class-head{display:flex;align-items:center;padding:13px 14px;gap:10px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.hw-class-head:active{opacity:.75}
+.hw-class-name{font-family:var(--fd);font-size:14px;font-weight:700;flex:1}
+.hw-class-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.hw-class-body{display:none;border-top:1px solid var(--border);padding:12px}
+.hw-class-block.open .hw-class-body{display:block}
+.hw-class-block.open .hw-class-chevron{transform:rotate(180deg);color:var(--teal)}
+.hw-class-chevron{font-size:18px;color:var(--muted);transition:transform .22s}
+.hw-entry{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+.hw-entry:last-child{border-bottom:none}
+.hw-entry-info{flex:1;min-width:0}
+.hw-entry-sub{font-size:12px;font-weight:700;color:var(--teal)}
+.hw-entry-task{font-size:13px;color:var(--text);margin-top:2px;line-height:1.4;word-break:break-word}
+.hw-entry-meta{font-size:11px;color:var(--muted);margin-top:3px}
+.hw-status-btn{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;cursor:pointer;border:1px solid var(--border2);background:var(--surface2);color:var(--muted);transition:all .15s;flex-shrink:0;white-space:nowrap;font-family:var(--fb)}
+.hw-status-btn.given{background:rgba(245,200,66,.12);color:var(--amber);border-color:rgba(245,200,66,.3)}
+.hw-status-btn.checked{background:rgba(74,222,128,.12);color:var(--green);border-color:rgba(74,222,128,.3)}
+.hw-wa-btn{background:rgba(37,211,102,.12);color:#25d366;border:1px solid rgba(37,211,102,.3);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s;font-family:var(--fb);margin-top:8px;width:100%}
+.hw-wa-btn:active{opacity:.7}
+/* Notif sound settings */
+.sound-option{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);cursor:pointer;user-select:none;-webkit-user-select:none}
+.sound-option:last-child{border-bottom:none}
+.sound-option:active{opacity:.7}
+.sound-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.sound-radio.sel{background:var(--teal);border-color:var(--teal)}
+.sound-radio.sel::after{content:'';width:7px;height:7px;border-radius:50%;background:#000}
+.sound-name{flex:1;font-size:14px;font-weight:500}
+.sound-preview{font-size:11px;color:var(--muted);background:var(--surface2);padding:3px 8px;border-radius:6px;cursor:pointer;border:1px solid var(--border);transition:all .15s}
+.sound-preview:active{background:var(--border2)}
+/* ── Global Notification Settings ──────────────────────────────── */
+.nf-feat-card{background:var(--surface2);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.nf-feat-head{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.nf-feat-head:active{opacity:.75}
+.nf-feat-emoji{font-size:20px;flex-shrink:0;line-height:1}
+.nf-feat-info{flex:1;min-width:0}
+.nf-feat-name{font-size:13px;font-weight:700;font-family:var(--fd)}
+.nf-feat-desc{font-size:11px;color:var(--muted);margin-top:2px}
+.nf-feat-body{display:none;border-top:1px solid var(--border);padding:13px 14px}
+.nf-feat-card.open .nf-feat-body{display:block}
+.nf-feat-card.open .nf-feat-chev{transform:rotate(180deg)}
+.nf-feat-chev{font-size:16px;color:var(--muted);transition:transform .2s;flex-shrink:0}
+.nf-sub-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:12px 0 6px}
+.nf-sub-label:first-child{margin-top:0}
+.nf-chip-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:2px}
+.nf-chip{padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:var(--surface);color:var(--muted);transition:all .15s;font-family:var(--fb);user-select:none}
+.nf-chip:active{transform:scale(.93)}
+.nf-chip.sel{background:rgba(45,224,176,.14);color:var(--teal);border-color:rgba(45,224,176,.3)}
+/* Day selector */
+.day-tabs{display:flex;gap:4px;margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+.day-tabs::-webkit-scrollbar{display:none}
+.day-btn{flex-shrink:0;padding:8px 14px;border-radius:10px;font-size:12px;font-weight:700;font-family:var(--fd);cursor:pointer;border:1px solid var(--border2);background:var(--surface2);color:var(--muted);transition:all .2s;user-select:none;letter-spacing:0}
+.day-btn:active{opacity:.7}
+.day-btn.active{background:rgba(91,156,246,.18);color:var(--blue);border-color:rgba(91,156,246,.35)}
+.day-btn.today{border-color:rgba(45,224,176,.4)}
+/* Period rows */
+.period-row{display:flex;align-items:stretch;gap:0;border-bottom:1px solid var(--border);min-height:58px}
+.period-row:last-child{border-bottom:none}
+.period-num{width:44px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.5px;border-right:1px solid var(--border);padding:8px 4px}
+.period-time{font-size:8px;font-weight:500;color:var(--muted);opacity:.75;margin-top:3px;letter-spacing:0;text-align:center;line-height:1.4;white-space:pre}
+.period-cell{flex:1;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;transition:background .15s;min-height:58px}
+.period-cell:active{background:rgba(255,255,255,.03)}
+.period-cell.filled{cursor:pointer}
+.period-cell.empty-cell{opacity:.5}
+.period-class-info{flex:1;min-width:0}
+.period-cls{font-size:13px;font-weight:700;font-family:var(--fd);color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.period-sub{font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.period-edit-icon{font-size:14px;opacity:.3;flex-shrink:0;color:var(--muted)}
+.period-cell:active .period-edit-icon{opacity:.8}
+/* Tiffin break */
+.tiffin-bar{display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(245,200,66,.07);border-top:1px solid rgba(245,200,66,.2);border-bottom:1px solid rgba(245,200,66,.2);margin:0}
+.tiffin-label{font-size:11px;font-weight:700;color:var(--amber);letter-spacing:.8px;text-transform:uppercase}
+/* Notification toggle bar */
+.notif-toggle-bar{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-radius:12px;margin-bottom:12px;cursor:pointer;user-select:none;transition:all .2s;border:1px solid;-webkit-user-select:none}
+.notif-toggle-bar.on{background:rgba(45,224,176,.08);border-color:rgba(45,224,176,.25)}
+.notif-toggle-bar.off{background:rgba(255,255,255,.03);border-color:var(--border)}
+.ntb-left{display:flex;align-items:center;gap:8px}
+.ntb-icon{font-size:16px;line-height:1}
+.ntb-text{font-size:12px;font-weight:600}
+.notif-toggle-bar.on .ntb-text{color:var(--teal)}
+.notif-toggle-bar.off .ntb-text{color:var(--muted)}
+.ntb-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.ntb-switch{width:38px;height:22px;border-radius:11px;position:relative;flex-shrink:0;transition:background .2s}
+.notif-toggle-bar.on .ntb-switch{background:var(--teal)}
+.notif-toggle-bar.off .ntb-switch{background:var(--surface2);border:1px solid var(--border2)}
+.ntb-knob{position:absolute;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.notif-toggle-bar.on .ntb-knob{left:19px}
+.notif-toggle-bar.off .ntb-knob{left:3px}
+/* Provisional */
+.prov-card{border-radius:14px;border:1px solid rgba(167,139,250,.3);background:rgba(167,139,250,.06);padding:14px;margin-bottom:10px;position:relative}
+.prov-date-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.prov-date-label{font-family:var(--fd);font-size:13px;font-weight:800;color:var(--purple)}
+.prov-today-badge{font-size:10px;background:rgba(45,224,176,.15);color:var(--teal);padding:3px 8px;border-radius:10px;font-weight:700}
+.prov-entry{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.prov-entry:last-child{border-bottom:none}
+.prov-period-badge{font-size:10px;font-weight:800;background:rgba(167,139,250,.15);color:var(--purple);padding:3px 8px;border-radius:6px;flex-shrink:0;white-space:nowrap}
+.prov-info{flex:1;min-width:0}
+.prov-cls{font-size:13px;font-weight:600;color:var(--text)}
+.prov-sub{font-size:11px;color:var(--muted);margin-top:1px}
+/* School inner tabs */
+.sch-tabs{display:flex;gap:5px;margin-bottom:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:5px}
+.sch-tab{flex:1;padding:9px 4px;border-radius:10px;font-size:12px;font-weight:700;font-family:var(--fd);cursor:pointer;border:none;background:transparent;color:var(--muted);transition:all .2s;letter-spacing:0;white-space:nowrap;user-select:none}
+.sch-tab:active{opacity:.7}
+.sch-tab.active{background:rgba(91,156,246,.18);color:var(--blue);box-shadow:0 2px 8px rgba(91,156,246,.12)}
+.sch-pane{display:none}
+.sch-pane.active{display:block;animation:slideUp .2s ease}
+/* ── Today Highlights ─────────────────────────────────────────── */
+.highlight-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.hl-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.hl-card:active{transform:scale(.97);opacity:.85}
+.hl-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.hl-icon{font-size:18px;line-height:1}
+.hl-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+.hl-title{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.hl-main{font-family:var(--fd);font-size:15px;font-weight:800;line-height:1.2;margin-bottom:3px}
+.hl-sub{font-size:11px;color:var(--muted);line-height:1.4}
+.hl-accent-teal{border-color:rgba(45,224,176,.2);background:rgba(45,224,176,.04)}
+.hl-accent-amber{border-color:rgba(245,200,66,.2);background:rgba(245,200,66,.04)}
+.hl-accent-blue{border-color:rgba(91,156,246,.2);background:rgba(91,156,246,.04)}
+.hl-accent-coral{border-color:rgba(255,107,91,.2);background:rgba(255,107,91,.04)}
+.hl-accent-purple{border-color:rgba(167,139,250,.2);background:rgba(167,139,250,.04)}
+.hl-accent-gray{border-color:var(--border2);background:var(--surface2)}
+
+/* ═══════════════════════════════════════════════
+   STICKY REMINDERS
+═══════════════════════════════════════════════ */
+.sticky-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.sticky-toggle-row:last-of-type{border-bottom:none}
+.sticky-toggle-label{font-size:13px;font-weight:600;color:var(--text);flex:1}
+.sticky-toggle-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.sticky-sw{width:40px;height:22px;border-radius:11px;background:var(--surface2);border:1px solid var(--border2);position:relative;cursor:pointer;transition:background .2s,border-color .2s;flex-shrink:0}
+.sticky-sw.on{background:var(--teal);border-color:var(--teal)}
+.sticky-sw-knob{position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.sticky-sw.on .sticky-sw-knob{left:21px}
+.sticky-interval-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:4px 0 2px}
+.sticky-int-chip{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:var(--surface2);color:var(--muted);transition:all .15s;font-family:var(--fb);white-space:nowrap}
+.sticky-int-chip.sel{background:rgba(45,224,176,.18);color:var(--teal);border-color:rgba(45,224,176,.4)}
+.sticky-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;background:rgba(45,224,176,.12);color:var(--teal);border:1px solid rgba(45,224,176,.2);flex-shrink:0}
+
+/* Floating sticky reminder overlay */
+#stickyOverlay{
+  display:none;
+  position:fixed;inset:0;z-index:10000;
+  background:rgba(0,0,0,.72);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;
+  animation:stickyIn .35s cubic-bezier(.34,1.56,.64,1) both;
+}
+#stickyOverlay.visible{display:flex}
+@keyframes stickyIn{
+  from{opacity:0;transform:scale(.88)}
+  to{opacity:1;transform:scale(1)}
+}
+.sticky-card{
+  position:relative;
+  width:min(320px,88vw);
+  background:var(--surface);
+  border-radius:24px;
+  padding:28px 24px 22px;
+  box-shadow:0 24px 64px rgba(0,0,0,.6),0 0 0 1.5px rgba(45,224,176,.25),0 0 40px rgba(45,224,176,.08);
+  border:1px solid rgba(45,224,176,.2);
+  text-align:center;
+}
+.sticky-card-icon{font-size:44px;margin-bottom:10px;animation:stickyBounce 1.8s ease-in-out infinite}
+@keyframes stickyBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.sticky-card-area{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--teal);margin-bottom:6px;opacity:.8}
+.sticky-card-text{font-family:var(--fd);font-size:20px;font-weight:800;line-height:1.3;color:var(--text);margin-bottom:6px}
+.sticky-card-meta{font-size:11px;color:var(--muted);margin-bottom:22px;line-height:1.4}
+.sticky-card-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:12px 28px;border-radius:12px;
+  background:rgba(45,224,176,.15);color:var(--teal);
+  border:1px solid rgba(45,224,176,.35);
+  font-size:14px;font-weight:700;font-family:var(--fb);
+  cursor:pointer;transition:all .15s;width:100%;margin-bottom:8px;
+}
+.sticky-card-btn:active{transform:scale(.97);opacity:.85}
+.sticky-card-snooze{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:8px 16px;border-radius:10px;
+  background:transparent;color:var(--muted);
+  border:1px solid var(--border2);
+  font-size:12px;font-weight:600;font-family:var(--fb);
+  cursor:pointer;transition:all .15s;width:100%;
+}
+.sticky-card-snooze:active{opacity:.7}
+.sticky-card-close{
+  position:absolute;top:14px;right:16px;
+  background:var(--surface2);border:1px solid var(--border2);
+  color:var(--muted);font-size:18px;
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .15s;line-height:1;
+}
+.sticky-card-close:active{background:var(--border2);color:var(--text)}
+.sticky-countdown{
+  position:absolute;bottom:-38px;left:50%;transform:translateX(-50%);
+  font-size:11px;color:rgba(255,255,255,.45);white-space:nowrap;
+  font-family:var(--fb);font-weight:600;letter-spacing:.4px;
+}
+.sticky-pulse-ring{
+  position:absolute;inset:-6px;border-radius:30px;
+  border:2px solid rgba(45,224,176,.25);
+  animation:stickyPulse 2s ease-out infinite;pointer-events:none;
+}
+@keyframes stickyPulse{
+  0%{opacity:.6;transform:scale(1)}
+  100%{opacity:0;transform:scale(1.06)}
+}
+@keyframes stickyOut{
+  from{opacity:1;transform:scale(1)}
+  to{opacity:0;transform:scale(.9)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="status-bar"></div>
+  <div class="topbar">
+    <div class="topbar-logo"><span class="accent">My Workspace</span><br><span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:0.3px;white-space:nowrap">by Jayanta Mondal</span></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="topbar-icon-btn" id="themeBtn" onclick="openThemePicker()" title="Change theme">🎨</button>
+      <button class="topbar-icon-btn" onclick="openGlobalSettings()" title="Notification settings">🔔</button>
+      <div class="topbar-date" id="dateDisplay"></div>
+    </div>
+  </div>
+  <div class="scroll-area" id="scrollArea">
+
+    <div class="install-bar" id="installBar">
+      <div style="font-size:28px">📲</div>
+      <div class="it"><strong>Install as App</strong>Tap to add to home screen</div>
+      <button class="btn btn-teal btn-sm" id="installBtn">Install</button>
+    </div>
+
+    <!-- TODAY -->
+    <div id="panel-today" class="panel active">
+      <div class="notif-toggle-bar" id="ntb-today" onclick="toggleTodayNotif()"></div>
+      <div class="greeting">
+        <h1 id="greetingText">Good morning 🙏</h1>
+        <p id="greetingSub"></p>
+      </div>
+      <div id="todayStats" style="margin-bottom:14px"></div>
+
+      <!-- Highlights from every section -->
+      <div class="s-label" style="margin-top:0">✨ Highlights</div>
+      <div id="todayHighlights"></div>
+
+      <div class="s-label">Today's 3 tasks</div>
+      <div class="card">
+        <div class="field-row" style="margin-bottom:8px">
+          <input class="field" style="margin:0;flex:1" type="text" id="taskInput" placeholder="Add a task...">
+          <select class="field" style="margin:0;width:110px;flex:none" id="taskArea" onchange="handleTaskAreaChange()">
+            <option value="tuition">Tuition</option><option value="school">School</option>
+            <option value="market">Market</option><option value="singing">Singing</option><option value="personal">Personal</option>
+          </select>
+        </div>
+        <input class="field" type="text" id="taskPersonalSub" placeholder="Personal category (e.g. Health, Family…)" style="display:none;margin-bottom:8px">
+        <button class="btn btn-teal btn-full" onclick="addTask()">+ Add Task</button>
+        <div style="margin-top:12px" id="taskList"></div>
+      </div>
+      <div class="s-label">Energy today</div>
+      <div class="card">
+        <div class="energy-row">
+          <button class="energy-pill" id="ep-high" onclick="setEnergy('high')">🔋 High</button>
+          <button class="energy-pill" id="ep-med" onclick="setEnergy('medium')">⚡ Medium</button>
+          <button class="energy-pill" id="ep-low" onclick="setEnergy('low')">😴 Rest</button>
+        </div>
+      </div>
+      <div class="s-label">Quick diary note</div>
+      <div class="card">
+        <input class="field" type="text" id="diaryCat" placeholder="Category (e.g. Reflection, Health, Goals…)">
+        <textarea class="field" id="diaryText" placeholder="How is your day? Write freely..."></textarea>
+        <div class="field-row">
+          <button class="btn btn-ghost btn-full" onclick="saveDiary()">Save note</button>
+          <button class="btn btn-ghost btn-full" onclick="document.getElementById('diaryText').value='';document.getElementById('diaryCat').value=''">Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TUITION -->
+    <div id="panel-tuition" class="panel">
+
+      <div class="notif-toggle-bar" id="ntb-tuition" onclick="toggleTuitionNotif()"></div>
+
+      <!-- HOMEWORK TRACKER — top priority -->
+      <div class="s-label-row" style="margin-top:0">
+        <span>📚 Homework Tracker</span>
+        <button class="btn btn-teal btn-sm" onclick="openAddHomework()">+ Add</button>
+      </div>
+      <div id="hwClassList"></div>
+
+      <div class="s-label">Overview</div>
+      <div class="stats-row" id="tuitionStats"></div>
+      <div class="s-label">Add student</div>
+      <div class="card">
+        <input class="field" type="text" id="studentName" placeholder="Student name">
+        <div class="field-row" style="margin-bottom:8px">
+          <select class="field" style="margin:0;flex:1" id="studentClass">
+            <option>Class 8</option><option>Class 9</option><option>Class 10</option><option>Class 11</option><option>Class 12</option>
+          </select>
+          <select class="field" style="margin:0;flex:1" id="studentSubject">
+            <option>Maths</option><option>Physics</option><option>Chemistry</option><option>Biology</option><option selected>English</option><option>History</option><option>Other</option>
+          </select>
+        </div>
+        <input class="field" type="number" id="studentFee" placeholder="Monthly fee ₹">
+        <button class="btn btn-teal btn-full" onclick="addStudent()">+ Add Student</button>
+      </div>
+      <div class="s-label">Students & fees</div>
+      <div class="card">
+        <div class="card-title">Fee Tracker <span id="totalFeeDisplay" class="badge b-teal"></span></div>
+        <div id="studentList"></div>
+      </div>
+      <div class="s-label">Tuition notes</div>
+      <div class="card">
+        <input class="field" type="text" id="tuitionNoteCat" placeholder="Category (e.g. Class 10, Maths, Parent…)">
+        <input class="field" type="text" id="tuitionNote" placeholder="Note about a student or topic...">
+        <button class="btn btn-teal btn-full" onclick="addTuitionNote()">+ Add Note</button>
+        <div style="margin-top:12px" id="tuitionNoteList"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         MARKET v2
+    ═══════════════════════════════════════ -->
+    <div id="panel-market" class="panel">
+
+      <!-- Market alert bar -->
+      <div class="notif-toggle-bar" id="ntb-market" onclick="toggleMarketNotif()"></div>
+
+      <!-- Inner tab bar -->
+      <div class="mkt-tabs">
+        <button class="mkt-tab active" onclick="mktTab(this,'summary')">📊 Summary</button>
+        <button class="mkt-tab" onclick="mktTab(this,'mom')">👩 Mom</button>
+        <button class="mkt-tab" onclick="mktTab(this,'dad')">👨 Dad</button>
+        <button class="mkt-tab" onclick="mktTab(this,'wife')">👱 Wife</button>
+      </div>
+
+      <!-- Summary pane -->
+      <div id="mkt-pane-summary" class="mkt-pane active"></div>
+      <!-- Person panes -->
+      <div id="mkt-pane-mom" class="mkt-pane"></div>
+      <div id="mkt-pane-dad" class="mkt-pane"></div>
+      <div id="mkt-pane-wife" class="mkt-pane"></div>
+    </div>
+
+    <!-- SCHOOL -->
+    <div id="panel-school" class="panel">
+
+      <!-- Inner tabs -->
+      <div class="sch-tabs">
+        <button class="sch-tab active" onclick="schTab(this,'routine')">📅 Routine</button>
+        <button class="sch-tab" onclick="schTab(this,'provisional')">🔀 Provisional</button>
+        <button class="sch-tab" onclick="schTab(this,'tasks')">📋 Tasks</button>
+        <button class="sch-tab" onclick="schTab(this,'notes')">📝 Notes</button>
+      </div>
+
+      <!-- ROUTINE pane -->
+      <div id="sch-pane-routine" class="sch-pane active">
+        <div class="notif-toggle-bar" id="ntb-routine" onclick="toggleSchoolNotif()"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <span style="font-size:11px;color:var(--muted)">Tap any period to edit · Mon–Fri: 8 · Sat: 4</span>
+          <button class="btn btn-ghost btn-sm" style="font-size:11px;padding:5px 10px;gap:4px" onclick="openPeriodTimesSheet()">⏱ Times</button>
+        </div>
+        <div class="day-tabs" id="schDayTabs"></div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <div id="schPeriodList"></div>
+        </div>
+      </div>
+
+      <!-- PROVISIONAL pane -->
+      <div id="sch-pane-provisional" class="sch-pane">
+        <div class="notif-toggle-bar" id="ntb-provisional" onclick="toggleSchoolNotif()"></div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px">Add extra / substitute classes for a specific date only.</div>
+        <div class="card">
+          <div style="margin-bottom:4px"><label style="font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.8px;text-transform:uppercase">Date</label></div>
+          <input class="field" type="date" id="provDate">
+          <div class="field-row" style="margin-bottom:8px">
+            <select class="field" id="provPeriod" style="margin:0;flex:1">
+              <option value="1">Period 1</option><option value="2">Period 2</option><option value="3">Period 3</option>
+              <option value="4">Period 4</option><option value="5">Period 5</option><option value="6">Period 6</option>
+              <option value="7">Period 7</option><option value="8">Period 8</option>
+            </select>
+            <input class="field" id="provClass" placeholder="Class" style="margin:0;flex:1">
+            <input class="field" id="provSection" placeholder="Sec" value="A" style="margin:0;width:60px;flex:none">
+          </div>
+          <input class="field" id="provSubject" placeholder="Subject" value="English">
+          <input class="field" id="provNote" placeholder="Note (optional, e.g. substituting for Mr. X)">
+          <button class="btn btn-full" style="background:rgba(167,139,250,.14);color:var(--purple);border:1px solid rgba(167,139,250,.3)" onclick="addProvEntry()">+ Add Provisional Class</button>
+        </div>
+        <div id="provList"></div>
+      </div>
+
+      <!-- TASKS pane -->
+      <div id="sch-pane-tasks" class="sch-pane">
+        <div class="notif-toggle-bar" id="ntb-tasks" onclick="toggleSchoolNotif()"></div>
+        <div class="s-label" style="margin-top:0">School tasks</div>
+        <div class="card">
+          <input class="field" type="text" id="schoolTask" placeholder="Task, test prep, marking...">
+          <select class="field" id="schoolPriority">
+            <option value="urgent">🔴 Urgent</option><option value="normal" selected>🔵 Normal</option><option value="low">⚪ Low priority</option>
+          </select>
+          <button class="btn btn-blue btn-full" onclick="addSchoolTask()">+ Add Task</button>
+          <div style="margin-top:12px" id="schoolTaskList"></div>
+        </div>
+      </div>
+
+      <!-- NOTES pane -->
+      <div id="sch-pane-notes" class="sch-pane">
+        <div class="notif-toggle-bar" id="ntb-notes" onclick="toggleSchoolNotif()"></div>
+        <div class="s-label" style="margin-top:0">Lesson notes & ideas</div>
+        <div class="card">
+          <textarea class="field" id="schoolNotes" placeholder="Lesson ideas, syllabus reminders, school notices..."></textarea>
+          <button class="btn btn-blue btn-full" onclick="saveSchoolNotes()">Save Notes</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SINGING -->
+    <div id="panel-singing" class="panel">
+      <div class="notif-toggle-bar" id="ntb-singing" onclick="toggleSingingNotif()"></div>
+      <div class="stats-row" id="singingStats"></div>
+      <div class="s-label">Log practice session</div>
+      <div class="card">
+        <input class="field" type="date" id="practiceDate">
+        <input class="field" type="number" id="practiceMinutes" placeholder="Minutes practiced">
+        <input class="field" type="text" id="practiceFocus" placeholder="What did you practise?">
+        <button class="btn btn-coral btn-full" onclick="logPractice()">+ Log Session</button>
+      </div>
+      <div class="s-label">Practice history</div>
+      <div class="card"><div id="practiceList"></div></div>
+      <div class="s-label">Songs to learn / Goals</div>
+      <div class="card">
+        <input class="field" type="text" id="songGoal" placeholder="Song name or singing goal...">
+        <button class="btn btn-coral btn-full" onclick="addSongGoal()">+ Add Goal</button>
+        <div style="margin-top:12px" id="songGoalList"></div>
+      </div>
+    </div>
+
+    <!-- PENDING -->
+    <div id="panel-pending" class="panel">
+      <div class="notif-toggle-bar" id="ntb-pending" onclick="togglePendingNotif()"></div>
+      <div class="s-label">Brain dump — nothing forgotten</div>
+      <div class="card">
+        <input class="field" type="text" id="pendingText" placeholder="What's on your mind? Add it here...">
+        <select class="field" id="pendingArea" onchange="handlePendingAreaChange()">
+          <option value="tuition">Tuition</option><option value="school">School</option>
+          <option value="market">Market</option><option value="singing">Singing</option><option value="personal">Personal</option>
+        </select>
+        <input class="field" type="text" id="pendingPersonalSub" placeholder="Personal category (e.g. Health, Family…)" style="display:none;margin-bottom:8px">
+
+        <!-- Sticky reminder toggle -->
+        <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:12px 14px;margin-bottom:8px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--text)">📌 Sticky Reminder</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">Pop up on screen every interval, even after closing</div>
+            </div>
+            <div class="sticky-sw" id="addStickySwitch" onclick="toggleAddSticky()"><div class="sticky-sw-knob"></div></div>
+          </div>
+          <div id="addStickyOptions" style="display:none">
+            <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Remind every</div>
+            <div class="sticky-interval-row" id="addStickyIntervalRow">
+              <span class="sticky-int-chip sel" data-min="30" onclick="selectAddInterval(this,30)">30 min</span>
+              <span class="sticky-int-chip" data-min="60" onclick="selectAddInterval(this,60)">1 hr</span>
+              <span class="sticky-int-chip" data-min="90" onclick="selectAddInterval(this,90)">1.5 hr</span>
+              <span class="sticky-int-chip" data-min="120" onclick="selectAddInterval(this,120)">2 hr</span>
+              <span class="sticky-int-chip" data-min="180" onclick="selectAddInterval(this,180)">3 hr</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-ghost btn-full" onclick="addPending()">+ Add Pending Item</button>
+      </div>
+      <div class="s-label">All pending items</div>
+      <div class="card"><div id="pendingList"></div></div>
+    </div>
+
+    <!-- Sticky Reminder Overlay -->
+    <div id="stickyOverlay">
+      <div style="position:relative">
+        <div class="sticky-pulse-ring"></div>
+        <div class="sticky-card" id="stickyCard">
+          <div class="sticky-card-close" onclick="closeStickyOverlay()">×</div>
+          <div class="sticky-card-icon" id="stickyIcon">📌</div>
+          <div class="sticky-card-area" id="stickyArea">Reminder</div>
+          <div class="sticky-card-text" id="stickyText">Reminder text</div>
+          <div class="sticky-card-meta" id="stickyMeta"></div>
+          <button class="sticky-card-btn" onclick="dismissSticky()">✓ Got it!</button>
+          <button class="sticky-card-snooze" onclick="snoozeSticky()">⏰ Snooze 10 min</button>
+          <div class="sticky-countdown" id="stickyCountdown"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end scroll-area -->
+
+  <nav class="bottom-nav">
+    <div class="nav-item active" id="nav-today" onclick="switchTab('today')">
+      <div class="nav-icon">🏠</div><div class="nav-label">Today</div>
+    </div>
+    <div class="nav-item" id="nav-market" onclick="switchTab('market')">
+      <div class="nav-icon">📈</div><div class="nav-label">Market</div>
+    </div>
+    <div class="nav-item" id="nav-tuition" onclick="switchTab('tuition')">
+      <div class="nav-icon">🎓</div><div class="nav-label">Tuition</div>
+    </div>
+    <div class="nav-item" id="nav-school" onclick="switchTab('school')">
+      <div class="nav-icon">🏫</div><div class="nav-label">School</div>
+    </div>
+    <div class="nav-item" id="nav-singing" onclick="switchTab('singing')">
+      <div class="nav-icon">🎵</div><div class="nav-label">Singing</div>
+    </div>
+    <div class="nav-item" id="nav-pending" onclick="switchTab('pending')">
+      <div class="nav-icon">⏳</div><div class="nav-label">Pending</div>
+      <div class="nav-dot" id="pendingDot"></div>
+    </div>
+  </nav>
+
+  <!-- Market bottom sheet modal -->
+  <div class="mkt-overlay" id="mktOverlay" onclick="closeMktSheetOutside(event)">
+    <div class="mkt-sheet" id="mktSheet">
+      <div class="mkt-sheet-handle"></div>
+      <div class="mkt-sheet-head">
+        <span class="mkt-sheet-title" id="mktSheetTitle"></span>
+        <button class="mkt-sheet-close" onclick="closeMktSheet()">×</button>
+      </div>
+      <div class="mkt-sheet-body" id="mktSheetBody"></div>
+    </div>
+  </div>
+
+</div><!-- end .app -->
+
+<script>
+// ── PWA Manifest (inline data URI — works on GitHub Pages) ────
+(function(){
+  const manifest={
+    name:"My Workspace — Jayanta Mondal",
+    short_name:"My Workspace",
+    description:"Personal command center for teaching, tuition, share market & more",
+    start_url:"./index.html",
+    scope:"./",
+    display:"standalone",
+    orientation:"portrait",
+    background_color:"#0e0f13",
+    theme_color:"#0e0f13",
+    icons:[
+      {src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%230e0f13'/%3E%3Crect x='78' y='30' width='22' height='100' rx='6' fill='%232de0b0'/%3E%3Ccircle cx='89' cy='148' r='20' fill='%232de0b0'/%3E%3Ccircle cx='78' cy='148' r='20' fill='%230e0f13'/%3E%3Crect x='68' y='30' width='52' height='18' rx='6' fill='%232de0b0'/%3E%3Ccircle cx='138' cy='42' r='10' fill='%23f5c842'/%3E%3C/svg%3E",
+       sizes:"192x192",type:"image/svg+xml",purpose:"any maskable"},
+      {src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230e0f13'/%3E%3Crect x='205' y='80' width='58' height='270' rx='16' fill='%232de0b0'/%3E%3Ccircle cx='234' cy='390' r='54' fill='%232de0b0'/%3E%3Ccircle cx='205' cy='390' r='54' fill='%230e0f13'/%3E%3Crect x='180' y='80' width='140' height='48' rx='16' fill='%232de0b0'/%3E%3Ccircle cx='370' cy='112' r='28' fill='%23f5c842'/%3E%3C/svg%3E",
+       sizes:"512x512",type:"image/svg+xml",purpose:"any maskable"}
+    ]
+  };
+  const uri='data:application/manifest+json,'+encodeURIComponent(JSON.stringify(manifest));
+  document.getElementById('pwa-manifest').setAttribute('href',uri);
+})();
+
+// ── Service Worker (inline blob — caches the page for offline) ─
+// NOTE: On GitHub Pages, also place a sw.js file at repo root for best results.
+// The inline version below works for first-load caching.
+(function(){
+  if(!('serviceWorker' in navigator))return;
+  const CACHE='jw-v5';
+  const sw=`
+const CACHE='jw-v5';
+const ASSETS=[self.location.origin+self.location.pathname.replace('sw-inline.js','')+'index.html'];
+self.addEventListener('install',e=>{
+  e.waitUntil(
+    caches.open(CACHE).then(c=>c.addAll(['/index.html','/']))
+    .catch(()=>{}) // fails gracefully if paths differ
+  );
+  self.skipWaiting();
+});
+self.addEventListener('activate',e=>{
+  e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+  self.clients.claim();
+});
+self.addEventListener('fetch',e=>{
+  if(e.request.method!=='GET')return;
+  e.respondWith(
+    caches.match(e.request).then(cached=>{
+      const fresh=fetch(e.request).then(res=>{
+        if(res&&res.status===200){
+          const clone=res.clone();
+          caches.open(CACHE).then(c=>c.put(e.request,clone));
+        }
+        return res;
+      }).catch(()=>cached);
+      return cached||fresh;
+    })
+  );
+});`;
+  const blob=new Blob([sw],{type:'text/javascript'});
+  const url=URL.createObjectURL(blob);
+  navigator.serviceWorker.register(url,{scope:'./'})
+    .then(reg=>{
+      reg.addEventListener('updatefound',()=>{
+        const nw=reg.installing;
+        nw.addEventListener('statechange',()=>{
+          if(nw.state==='installed'&&navigator.serviceWorker.controller){
+            toast('🔄 App updated — reload for latest version');
+          }
+        });
+      });
+    })
+    .catch(()=>{});
+})();
+
+// ── Storage ───────────────────────────────────────────────────
+const S={
+  get:k=>{try{return JSON.parse(localStorage.getItem(k))||[]}catch{return[]}},
+  getObj:k=>{try{return JSON.parse(localStorage.getItem(k))||{}}catch{return{}}},
+  set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))
+};
+
+// ── Header ────────────────────────────────────────────────────
+function initHeader(){
+  const now=new Date();
+  document.getElementById('dateDisplay').textContent=now.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+  const h=now.getHours();
+  document.getElementById('greetingText').textContent=(h<12?'Good morning':h<17?'Good afternoon':'Good evening')+' Jayanta 🙏';
+  updateSub();
+}
+function updateSub(){
+  const today=new Date().toDateString();
+  const done=S.get('tasks').filter(t=>t.date===today&&t.done).length;
+  const total=S.get('tasks').filter(t=>t.date===today).length;
+  const p=S.get('pending').length;
+  document.getElementById('greetingSub').textContent=
+    total===0?'Add your 3 tasks for today.':
+    done===total?`All ${total} tasks done! 🎉`:
+    `${done}/${total} tasks done · ${p} pending`;
+}
+
+// ── Tabs ──────────────────────────────────────────────────────
+function switchTab(n){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  document.getElementById('panel-'+n).classList.add('active');
+  document.getElementById('nav-'+n).classList.add('active');
+  document.getElementById('scrollArea').scrollTop=0;
+  if(n==='today'){renderTodayStats();renderTodayHighlights();}
+  if(n==='market'){
+    if(_mktCurrentTab==='summary') renderMktSummary();
+    else renderPersonPane(_mktCurrentTab);
+  }
+  if(n==='school'&&_schTab==='routine')renderSchRoutine();
+  if(n==='school'&&_schTab==='provisional')renderProvList();
+}
+
+const AC={tuition:'teal',school:'blue',market:'amber',singing:'coral',personal:'gray'};
+const BC={tuition:'b-teal',school:'b-blue',market:'b-amber',singing:'b-coral',personal:'b-gray'};
+
+// ── Personal subcategory handlers ─────────────────────────────
+function handleTaskAreaChange(){
+  const v=document.getElementById('taskArea').value;
+  const sub=document.getElementById('taskPersonalSub');
+  sub.style.display=v==='personal'?'block':'none';
+  if(v!=='personal')sub.value='';
+}
+function handlePendingAreaChange(){
+  const v=document.getElementById('pendingArea').value;
+  const sub=document.getElementById('pendingPersonalSub');
+  sub.style.display=v==='personal'?'block':'none';
+  if(v!=='personal')sub.value='';
+}
+
+// ── Today Highlights ──────────────────────────────────────────
+function renderTodayHighlights(){
+  const el=document.getElementById('todayHighlights');if(!el)return;
+  const today=new Date().toDateString();
+  const todayStr=new Date().toISOString().split('T')[0];
+  const cards=[];
+
+  // 1. Market (2nd in nav after Home)
+  const mkt=getMkt();
+  let totInv=0,totPos=0,expSoon=0;
+  MKT_PEOPLE.forEach(p=>{mkt[p].brokers.forEach(b=>{totInv+=Number(b.invested||0);totPos+=(b.positions||[]).length;
+    b.positions.filter(pos=>pos.expiry&&daysUntil(pos.expiry)>=0&&daysUntil(pos.expiry)<=30).forEach(()=>expSoon++);
+  });});
+  const invStr=totInv>=1e7?'₹'+(totInv/1e7).toFixed(1)+'Cr':totInv>=1e5?'₹'+(totInv/1e5).toFixed(1)+'L':'₹'+totInv.toLocaleString('en-IN');
+  cards.push({accent:'amber',icon:'📈',title:'Market',main:invStr+' invested',
+    sub:totPos+' position'+(totPos!==1?'s':'')+(expSoon?' · ⚠ '+expSoon+' expiring soon':''),tab:'market'});
+
+  // 2. Tuition (3rd in nav)
+  const st=S.get('students');
+  const fee=st.reduce((s,x)=>s+Number(x.fee||0),0);
+  const unpaid=st.filter(x=>!x.feePaid).reduce((s,x)=>s+Number(x.fee||0),0);
+  cards.push({accent:'teal',icon:'🎓',title:'Tuition',main:st.length+' student'+(st.length!==1?'s':''),
+    sub:unpaid>0?'₹'+unpaid.toLocaleString('en-IN')+' fees pending':'All fees collected ✓',tab:'tuition'});
+
+  // 3. Homework (also under Tuition)
+  const hw=getHW();
+  const hwPending=hw.filter(h=>h.status==='given');
+  const hwDueSoon=hwPending.filter(h=>h.due&&h.due<=new Date(Date.now()+2*86400000).toISOString().split('T')[0]);
+  cards.push({accent:'purple',icon:'📚',title:'Homework',
+    main:hwPending.length+' pending',
+    sub:hwDueSoon.length?hwDueSoon.length+' due within 2 days':'No urgent due dates',tab:'tuition'});
+
+  // 4. School (4th in nav)
+  const dayName=todayDayName();
+  const routine=getRoutine();
+  const periods=dayName?(Object.values((routine[dayName]||{})).filter(p=>p&&(p.cls||p.subject)).length):0;
+  const provToday=(getProv().find(x=>x.date===todayStr)||{entries:[]}).entries.length;
+  cards.push({accent:'blue',icon:'🏫',title:'School',main:periods+' class'+(periods!==1?'es':'')+(dayName?' ('+dayName+')':''),
+    sub:provToday?provToday+' provisional period'+(provToday>1?'s':''):'No provisional classes',tab:'school'});
+
+  // 5. Singing (5th in nav)
+  const pr=S.get('practices');
+  const practicedToday=pr.some(p=>p.date===todayStr);
+  const tot=pr.reduce((s,x)=>s+x.mins,0);
+  cards.push({accent:'coral',icon:'🎵',title:'Singing',main:(tot/60).toFixed(1)+' hrs total',
+    sub:practicedToday?'✓ Practiced today':'No session logged today',tab:'singing'});
+
+  // 6. Pending (last in nav)
+  const pending=S.get('pending');
+  cards.push({accent:'gray',icon:'⏳',title:'Pending',main:pending.length+' item'+(pending.length!==1?'s':''),
+    sub:pending.length?pending.slice(0,2).map(p=>p.text).join(' · '):'All clear! 🎉',tab:'pending'});
+
+  const colorMap={teal:'var(--teal)',amber:'var(--amber)',blue:'var(--blue)',coral:'var(--coral)',purple:'var(--purple)',gray:'var(--muted)'};
+  el.innerHTML=`<div class="highlight-grid">${cards.map(c=>`
+    <div class="hl-card hl-accent-${c.accent}" onclick="switchTab('${c.tab}')">
+      <div class="hl-card-top">
+        <span class="hl-icon">${c.icon}</span>
+      </div>
+      <div class="hl-title">${c.title}</div>
+      <div class="hl-main" style="color:${colorMap[c.accent]}">${c.main}</div>
+      <div class="hl-sub">${c.sub}</div>
+    </div>`).join('')}</div>`;
+}
+
+// ── Today tasks ───────────────────────────────────────────────
+function addTask(){
+  const txt=document.getElementById('taskInput').value.trim();
+  const area=document.getElementById('taskArea').value;
+  const personalSub=document.getElementById('taskPersonalSub').value.trim();
+  if(!txt)return;
+  const t=S.get('tasks');
+  t.push({id:Date.now(),text:txt,area,personalSub:area==='personal'?personalSub:'',done:false,date:new Date().toDateString()});
+  S.set('tasks',t);
+  document.getElementById('taskInput').value='';
+  document.getElementById('taskPersonalSub').value='';
+  renderTasks();renderTodayStats();
+}
+function toggleTask(id){
+  const t=S.get('tasks'),x=t.find(v=>v.id===id);
+  if(x)x.done=!x.done;S.set('tasks',t);renderTasks();updateSub();
+}
+function deleteTask(id){S.set('tasks',S.get('tasks').filter(x=>x.id!==id));renderTasks();renderTodayStats();}
+function renderTasks(){
+  const today=new Date().toDateString();
+  const tasks=S.get('tasks').filter(t=>t.date===today);
+  const el=document.getElementById('taskList');
+  if(!tasks.length){el.innerHTML='<div class="empty"><div class="empty-icon">✏️</div>Add up to 3 tasks for today</div>';return;}
+  el.innerHTML=tasks.map(t=>`<div class="list-item">
+    <div class="check ${t.done?'done':''}" onclick="toggleTask(${t.id})"></div>
+    <div class="list-main"><div class="list-title ${t.done?'done':''}">${t.text}</div><div class="list-sub">${t.area==='personal'&&t.personalSub?t.personalSub:t.area}</div></div>
+    <button class="del" onclick="deleteTask(${t.id})">×</button></div>`).join('');
+}
+function renderTodayStats(){
+  const st=S.get('students'),pr=S.get('practices');
+  const unpaid=st.filter(x=>!x.feePaid).reduce((s,x)=>s+Number(x.fee||0),0);
+  const mkt=getMkt();
+  let totInv=0,totPos=0,expSoon=0,totExp=0;
+  MKT_PEOPLE.forEach(p=>{mkt[p].brokers.forEach(b=>{
+    totInv+=Number(b.invested||0);
+    totPos+=(b.positions||[]).length;
+    (b.positions||[]).forEach(pos=>{
+      if(pos.expiry){
+        totExp++;
+        if(daysUntil(pos.expiry)>=0&&daysUntil(pos.expiry)<=30)expSoon++;
+      }
+    });
+  });});
+  const expColor=expSoon>0?'c-coral':'c-green';
+  const expBorderColor=expSoon>0?'rgba(255,107,91,.35)':'rgba(74,222,128,.25)';
+  const expBg=expSoon>0?'rgba(255,107,91,.06)':'rgba(74,222,128,.05)';
+  document.getElementById('todayStats').innerHTML=`
+    <div class="stat-card" style="margin-bottom:10px;border-color:${expBorderColor};background:${expBg};display:flex;align-items:center;justify-content:space-between;padding:14px 18px">
+      <div>
+        <div class="stat-label" style="font-size:11px;letter-spacing:.5px">🔴 Expiry ≤1 Month</div>
+        <div class="stat-value ${expColor}" style="font-size:30px;margin-top:2px">${expSoon}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:11px;color:var(--muted);font-weight:600">${expSoon>0?expSoon+' position'+(expSoon!==1?'s':'')+'<br>need attention':'All clear 🎉'}</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div class="stat-card"><div class="stat-label">Total Expiry</div><div class="stat-value" style="color:var(--muted)">${totExp}</div></div>
+      <div class="stat-card"><div class="stat-label">Open Positions</div><div class="stat-value c-blue">${totPos}</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="stat-card"><div class="stat-label">Fees Unpaid</div><div class="stat-value c-coral">₹${unpaid.toLocaleString('en-IN')}</div></div>
+      <div class="stat-card"><div class="stat-label">Practice Sessions</div><div class="stat-value c-teal">${pr.length}</div></div>
+    </div>`;
+}
+function setEnergy(l){
+  ['high','med','low'].forEach(x=>document.getElementById('ep-'+x).className='energy-pill');
+  const m={high:'ah',medium:'am',low:'al'};
+  document.getElementById(l==='medium'?'ep-med':'ep-'+l).classList.add(m[l]);
+  S.set('energy_today',{level:l,date:new Date().toDateString()});
+}
+function saveDiary(){
+  const txt=document.getElementById('diaryText').value.trim();
+  const cat=document.getElementById('diaryCat').value.trim();
+  if(!txt)return;
+  const e=S.get('diary');e.push({date:new Date().toLocaleString('en-IN'),text:txt,cat:cat||''});
+  S.set('diary',e);
+  document.getElementById('diaryText').value='';
+  document.getElementById('diaryCat').value='';
+  toast('Note saved ✓');
+}
+
+// ── Tuition ───────────────────────────────────────────────────
+function addStudent(){
+  const name=document.getElementById('studentName').value.trim();
+  if(!name)return;
+  const s=S.get('students');
+  s.push({id:Date.now(),name,cls:document.getElementById('studentClass').value,sub:document.getElementById('studentSubject').value,fee:Number(document.getElementById('studentFee').value)||0,feePaid:false});
+  S.set('students',s);
+  document.getElementById('studentName').value='';document.getElementById('studentFee').value='';
+  renderStudents();renderTodayStats();toast('Student added ✓');
+}
+function toggleFee(id){const s=S.get('students'),x=s.find(v=>v.id===id);if(x)x.feePaid=!x.feePaid;S.set('students',s);renderStudents();}
+function deleteStudent(id){if(!confirm('Remove this student?'))return;S.set('students',S.get('students').filter(x=>x.id!==id));renderStudents();renderTodayStats();}
+function renderStudents(){
+  const s=S.get('students');
+  const tot=s.reduce((a,x)=>a+x.fee,0),paid=s.filter(x=>x.feePaid).reduce((a,x)=>a+x.fee,0);
+  document.getElementById('totalFeeDisplay').textContent='₹'+tot.toLocaleString('en-IN');
+  document.getElementById('tuitionStats').innerHTML=`
+    <div class="stat-card"><div class="stat-label">Students</div><div class="stat-value c-teal">${s.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Monthly income</div><div class="stat-value c-amber">₹${tot.toLocaleString('en-IN')}</div></div>
+    <div class="stat-card"><div class="stat-label">Fees collected</div><div class="stat-value c-green">₹${paid.toLocaleString('en-IN')}</div></div>
+    <div class="stat-card"><div class="stat-label">Fees pending</div><div class="stat-value c-coral">₹${(tot-paid).toLocaleString('en-IN')}</div></div>`;
+  const el=document.getElementById('studentList');
+  if(!s.length){el.innerHTML='<div class="empty"><div class="empty-icon">🎓</div>No students yet</div>';return;}
+  el.innerHTML=s.map(x=>`<div class="fee-row">
+    <div class="fee-info"><div class="fee-name">${x.name}</div><div class="fee-detail">${x.cls} · ${x.sub}</div></div>
+    <div class="fee-right"><span class="fee-amount">₹${x.fee.toLocaleString('en-IN')}</span>
+    <span class="badge ${x.feePaid?'b-teal':'b-coral'}" onclick="toggleFee(${x.id})" style="cursor:pointer">${x.feePaid?'Paid ✓':'Unpaid'}</span>
+    <button class="del" onclick="deleteStudent(${x.id})">×</button></div></div>`).join('');
+}
+function addTuitionNote(){
+  const txt=document.getElementById('tuitionNote').value.trim();if(!txt)return;
+  const cat=document.getElementById('tuitionNoteCat').value.trim();
+  const n=S.get('tuitionNotes');n.push({id:Date.now(),text:txt,cat:cat||''});S.set('tuitionNotes',n);
+  document.getElementById('tuitionNote').value='';document.getElementById('tuitionNoteCat').value='';
+  renderTuitionNotes();
+}
+function deleteTuitionNote(id){S.set('tuitionNotes',S.get('tuitionNotes').filter(x=>x.id!==id));renderTuitionNotes();}
+function renderTuitionNotes(){
+  const n=S.get('tuitionNotes'),el=document.getElementById('tuitionNoteList');
+  if(!n.length){el.innerHTML='<div class="empty" style="padding:12px 0"><div class="empty-icon">📝</div>No notes yet</div>';return;}
+  el.innerHTML=n.map(x=>`<div class="list-item">
+    <div class="list-main">
+      ${x.cat?`<div class="list-sub" style="margin-bottom:2px;font-weight:600;color:var(--teal)">${x.cat}</div>`:''}
+      <div class="list-title">${x.text}</div>
+    </div>
+    <button class="del" onclick="deleteTuitionNote(${x.id})">×</button></div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  MARKET v2
+// ══════════════════════════════════════════════════════════════════
+
+const MKT_KEY='mkt_v2';
+const MKT_PEOPLE=['mom','dad','wife'];
+const MKT_EMOJI={mom:'👩',dad:'👨',wife:'👱‍♀️'};
+const MKT_LABEL={mom:'Mom',dad:'Dad',wife:'Wife'};
+let _mktCurrentTab='summary';
+
+function _defaultBrokers(){
+  return [
+    {name:'Zerodha',invested:0,availableFund:0,pledged:false,positions:[],expiries:[]},
+    {name:'Groww',invested:0,availableFund:0,pledged:false,positions:[],expiries:[]},
+    {name:'Upstox',invested:0,availableFund:0,pledged:false,positions:[],expiries:[]},
+    {name:'Angel One',invested:0,availableFund:0,pledged:false,positions:[],expiries:[]}
+  ];
+}
+
+function getMkt(){
+  try{
+    const raw=localStorage.getItem(MKT_KEY);
+    const d=raw?JSON.parse(raw):{};
+    MKT_PEOPLE.forEach(p=>{
+      if(!d[p])d[p]={brokers:_defaultBrokers(),bankAccounts:[]};
+      if(!d[p].brokers||!d[p].brokers.length)d[p].brokers=_defaultBrokers();
+      if(!d[p].bankAccounts)d[p].bankAccounts=[];
+      while(d[p].brokers.length<4)d[p].brokers.push({name:'Broker '+(d[p].brokers.length+1),invested:0,availableFund:0,pledged:false,positions:[],expiries:[]});
+      d[p].brokers.forEach(b=>{
+        if(!b.positions)b.positions=[];
+        if(!b.expiries)b.expiries=[];
+        if(b.pledged===undefined)b.pledged=false;
+        if(!b.invested)b.invested=0;
+        if(b.availableFund===undefined)b.availableFund=0;
+      });
+    });
+    return d;
+  }catch{return{mom:{brokers:_defaultBrokers(),bankAccounts:[]},dad:{brokers:_defaultBrokers(),bankAccounts:[]},wife:{brokers:_defaultBrokers(),bankAccounts:[]}};}
+}
+
+function saveMkt(d){localStorage.setItem(MKT_KEY,JSON.stringify(d));}
+
+// ─── Helpers ──────────────────────────────────────────────────
+function fmtINR(n){return Number(n||0).toLocaleString('en-IN');}
+
+function daysUntil(dateStr){
+  const today=new Date();today.setHours(0,0,0,0);
+  const exp=new Date(dateStr);exp.setHours(0,0,0,0);
+  return Math.round((exp-today)/(1000*60*60*24));
+}
+
+function expBadgeHTML(dateStr){
+  if(!dateStr)return'';
+  const d=daysUntil(dateStr);
+  if(d<0) return`<span class="exp-days-badge exp-expired">EXPIRED</span>`;
+  if(d===0)return`<span class="exp-days-badge exp-c-red">TODAY ⚠️</span>`;
+  // >90d → GREEN | >60d–90d → BLUE | >30d–60d → YELLOW | 0–30d → RED
+  const label=d<=30?d+'d':d<=60?Math.round(d/7)+'w':Math.round(d/30)+'mo';
+  if(d<=30)  return`<span class="exp-days-badge exp-c-red">🔴 ${label}</span>`;
+  if(d<=60)  return`<span class="exp-days-badge exp-c-yellow">🟡 ${label}</span>`;
+  if(d<=90)  return`<span class="exp-days-badge exp-c-blue">🔵 ${label}</span>`;
+  return`<span class="exp-days-badge exp-c-green">🟢 ${label}</span>`;
+}
+// Smaller pill version for inside position rows
+function expPillHTML(dateStr){
+  if(!dateStr)return'';
+  const d=daysUntil(dateStr);
+  const fmt=new Date(dateStr).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'2-digit'});
+  if(d<0) return`<span class="pos-exp-pill exp-expired">📅 ${fmt} · EXPIRED</span>`;
+  if(d===0)return`<span class="pos-exp-pill exp-c-red">📅 ${fmt} · TODAY ⚠️</span>`;
+  const label=d<=30?d+'d ⚠️':d<=60?Math.round(d/7)+'w':Math.round(d/30)+'mo';
+  if(d<=30)  return`<span class="pos-exp-pill exp-c-red">📅 ${fmt} · ${label}</span>`;
+  if(d<=60)  return`<span class="pos-exp-pill exp-c-yellow">📅 ${fmt} · ${label}</span>`;
+  if(d<=90)  return`<span class="pos-exp-pill exp-c-blue">📅 ${fmt} · ${label}</span>`;
+  return`<span class="pos-exp-pill exp-c-green">📅 ${fmt} · ${label}</span>`;
+}
+
+function personTotal(pData){
+  return pData.brokers.reduce((s,b)=>s+Number(b.invested||0),0);
+}
+function personAllPositions(pData){
+  return pData.brokers.flatMap((b,i)=>b.positions.map(p=>({...p,brokerName:b.name,brokerIdx:i})));
+}
+function personAllExpiries(pData){
+  // Expiry lives on positions now — collect positions that have an expiry date
+  return pData.brokers.flatMap((b,i)=>
+    b.positions.filter(p=>p.expiry).map(p=>({
+      id:p.id, contract:p.stock, expiry:p.expiry,
+      qty:p.qty, note:p.note, brokerName:b.name, brokerIdx:i,
+      type:p.type
+    }))
+  );
+}
+
+// ─── Tab switch ───────────────────────────────────────────────
+function mktTab(btn,tab){
+  document.querySelectorAll('.mkt-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.mkt-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('mkt-pane-'+tab).classList.add('active');
+  _mktCurrentTab=tab;
+  if(tab==='summary')renderMktSummary();
+  else renderPersonPane(tab);
+}
+
+// ─── Summary Tab ──────────────────────────────────────────────
+function renderMktSummary(){
+  const data=getMkt();
+  let totInv=0,totPos=0,pledgedCount=0;
+  const allExp=[];
+  let totBrokerFund=0, totBank=0;
+
+  MKT_PEOPLE.forEach(p=>{
+    totInv+=personTotal(data[p]);
+    totPos+=personAllPositions(data[p]).length;
+    data[p].brokers.forEach(b=>{
+      if(b.pledged)pledgedCount++;
+      totBrokerFund+=Number(b.availableFund||0);
+    });
+    (data[p].bankAccounts||[]).forEach(a=>totBank+=Number(a.balance||0));
+    personAllExpiries(data[p]).forEach(e=>allExp.push({...e,person:p}));
+  });
+  allExp.sort((a,b)=>new Date(a.expiry)-new Date(b.expiry));
+  const totLiquid=totBrokerFund+totBank;
+
+  const urgentExp=allExp.filter(e=>{const d=daysUntil(e.expiry);return d>=0&&d<=30;}).length;
+
+  const el=document.getElementById('mkt-pane-summary');
+  el.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div class="stat-card" style="border-color:${urgentExp?'rgba(255,107,91,.35)':'rgba(74,222,128,.25)'}"><div class="stat-label">🔴 Expiry ≤1 Month</div><div class="stat-value ${urgentExp?'c-coral':'c-green'}">${urgentExp}</div></div>
+      <div class="stat-card"><div class="stat-label">Total Expiries</div><div class="stat-value" style="color:var(--muted)">${allExp.length}</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div class="stat-card"><div class="stat-label">Open Positions</div><div class="stat-value c-blue">${totPos}</div></div>
+      <div class="stat-card"><div class="stat-label">Pledged A/cs</div><div class="stat-value ${pledgedCount?'c-coral':'c-teal'}">${pledgedCount}</div></div>
+    </div>
+
+    <!-- COMBINED PORTFOLIO CARD -->
+    <div style="background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:14px;margin-bottom:14px">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px">💼 Total Portfolio (All Members)</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <div style="flex:1;background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.2);border-radius:12px;padding:12px;text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;font-weight:600">📈 Invested</div>
+          <div style="font-family:var(--fd);font-size:18px;font-weight:800;color:var(--amber)">₹${fmtINR(totInv)}</div>
+        </div>
+        <div style="flex:1;background:rgba(91,156,246,.08);border:1px solid rgba(91,156,246,.2);border-radius:12px;padding:12px;text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;font-weight:600">💧 Liquid</div>
+          <div style="font-family:var(--fd);font-size:18px;font-weight:800;color:var(--blue)">₹${fmtINR(totLiquid)}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.22);border-radius:12px">
+        <span style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px">Grand Total</span>
+        <span style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--purple)">₹${fmtINR(totInv+totLiquid)}</span>
+      </div>
+    </div>
+
+    <div class="s-label-row">
+      <span>All Upcoming Expiries</span>
+      ${allExp.length?`<span class="badge ${urgentExp?'b-coral':'b-gray'}">${allExp.length} total</span>`:''}
+    </div>
+    <div class="card">
+      ${allExp.length?allExp.map(e=>`
+        <div class="exp-item">
+          ${expBadgeHTML(e.expiry)}
+          <div class="exp-info">
+            <div class="exp-name"><span class="pos-type-badge ${e.type==='LONG'?'pos-long':'pos-short'}" style="font-size:9px;padding:2px 6px;margin-right:4px">${e.type==='LONG'?'↑':'↓'}</span>${e.contract}</div>
+            <div class="exp-meta">${MKT_EMOJI[e.person]} ${MKT_LABEL[e.person]} · ${e.brokerName} · ${e.qty} qty${e.note?' · <span style="color:var(--amber)">'+e.note+'</span>':''}</div>
+          </div>
+        </div>`).join(''):'<div class="empty"><div class="empty-icon">📅</div>No expiries tracked yet<br><small style="font-size:11px">Add expiry dates inside positions in Mom / Dad / Wife tabs</small></div>'}
+    </div>
+
+    <!-- TOTAL LIQUID BALANCE -->
+    <div class="s-label">💧 Total Liquid Balance (All Members)</div>
+    <div class="liquid-bar">
+      <div class="liquid-bar-title">Breakdown</div>
+      ${MKT_PEOPLE.map(p=>{
+        const pf=data[p].brokers.reduce((s,b)=>s+Number(b.availableFund||0),0);
+        const pb=(data[p].bankAccounts||[]).reduce((s,a)=>s+Number(a.balance||0),0);
+        return(pf+pb>0)?`
+          <div class="liquid-row">
+            <span style="color:var(--text)">${MKT_EMOJI[p]} ${MKT_LABEL[p]}</span>
+            <span style="display:flex;gap:8px;align-items:center">
+              <span class="badge b-green" style="font-size:11px">💰 ₹${fmtINR(pf)}</span>
+              <span class="badge b-blue" style="font-size:11px">🏦 ₹${fmtINR(pb)}</span>
+            </span>
+          </div>`:'';
+      }).join('')}
+      <div class="liquid-total-row">
+        <span class="liquid-total-label">Total Liquid</span>
+        <span class="liquid-total-val">₹${fmtINR(totLiquid)}</span>
+      </div>
+    </div>
+
+    <div class="s-label">By family member</div>
+    ${MKT_PEOPLE.map(p=>_personSummaryCard(p,data[p])).join('')}
+  `;
+}
+
+function _personSummaryCard(person,pData){
+  const inv=personTotal(pData);
+  const pos=personAllPositions(pData);
+  const exp=personAllExpiries(pData);
+  const pledged=pData.brokers.filter(b=>b.pledged).map(b=>b.name);
+  const urgent=exp.filter(e=>{const d=daysUntil(e.expiry);return d>=0&&d<=30;}).length;
+  const totalFund=pData.brokers.reduce((s,b)=>s+Number(b.availableFund||0),0);
+  const bankAccounts=pData.bankAccounts||[];
+  const totalBank=bankAccounts.reduce((s,a)=>s+Number(a.balance||0),0);
+  const totalLiquid=totalFund+totalBank;
+  return `
+    <div class="person-sum-card">
+      <div class="person-sum-head">
+        <span class="person-sum-name">${MKT_EMOJI[person]} ${MKT_LABEL[person]}</span>
+        <span class="badge b-amber" style="font-family:var(--fd);font-size:13px">₹${fmtINR(inv)}</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+        <span class="badge b-green" style="font-size:11px">💰 Fund ₹${fmtINR(totalFund)}</span>
+        <span class="badge b-blue" style="font-size:11px">🏦 Bank ₹${fmtINR(totalBank)}</span>
+        <span class="badge" style="font-size:11px;background:rgba(91,156,246,.18);color:var(--blue);border:1px solid rgba(91,156,246,.3)">💧 Liquid ₹${fmtINR(totalLiquid)}</span>
+      </div>
+      <div class="person-sum-badges">
+        <span class="badge ${pos.length?'b-blue':'b-gray'}">${pos.length} position${pos.length!==1?'s':''}</span>
+        <span class="badge ${pledged.length?'b-coral':'b-green'}">${pledged.length?'Pledged: '+pledged.join(', '):'No pledge'}</span>
+        <span class="badge ${urgent?'b-coral':'b-gray'}">${exp.length} expir${exp.length!==1?'ies':'y'}${urgent?' ('+urgent+' urgent!)':''}</span>
+      </div>
+    </div>`;
+}
+
+// ─── Person Pane ──────────────────────────────────────────────
+function renderPersonPane(person){
+  const data=getMkt();
+  const pData=data[person];
+  const inv=personTotal(pData);
+  const pos=personAllPositions(pData);
+  const exp=personAllExpiries(pData).sort((a,b)=>new Date(a.expiry)-new Date(b.expiry));
+  const pledged=pData.brokers.filter(b=>b.pledged).map(b=>b.name);
+  const urgentExp=exp.filter(e=>{const d=daysUntil(e.expiry);return d>=0&&d<=30;}).length;
+
+  const el=document.getElementById('mkt-pane-'+person);
+
+  // Build broker breakdown strings for overview
+  const posByBroker=pData.brokers.filter(b=>b.positions.length).map(b=>`${b.name} (${b.positions.length})`);
+  const totalFund=pData.brokers.reduce((s,b)=>s+Number(b.availableFund||0),0);
+  const bankAccounts=pData.bankAccounts||[];
+  const totalBank=bankAccounts.reduce((s,a)=>s+Number(a.balance||0),0);
+  const totalLiquid=totalFund+totalBank;
+
+  el.innerHTML=`
+    <!-- OVERVIEW -->
+    <div class="s-label">Overview — ${MKT_EMOJI[person]} ${MKT_LABEL[person]}</div>
+    <div class="ov-card">
+      <div class="ov-row">
+        <span class="ov-label">Total Invested</span>
+        <span class="ov-val-big">₹${fmtINR(inv)}</span>
+      </div>
+      <div class="ov-row">
+        <span class="ov-label">💰 Broker Funds</span>
+        <span class="ov-val-big" style="color:var(--green);font-size:18px">₹${fmtINR(totalFund)}</span>
+      </div>
+      <div class="ov-row">
+        <span class="ov-label">🏦 Bank Balance</span>
+        <span class="ov-val-big" style="color:var(--blue);font-size:18px">₹${fmtINR(totalBank)}</span>
+      </div>
+      <div class="ov-row" style="background:rgba(91,156,246,.05);margin:0 -16px;padding:12px 16px;border-radius:0 0 14px 14px">
+        <span class="ov-label" style="font-weight:700;color:var(--text)">💧 Total Liquid</span>
+        <span class="ov-val-big" style="color:var(--blue)">₹${fmtINR(totalLiquid)}</span>
+      </div>
+      <div class="ov-row">
+        <span class="ov-label">Open Positions</span>
+        <span class="ov-val" style="max-width:60%;text-align:right">
+          ${posByBroker.length
+            ?posByBroker.map(b=>`<span class="badge b-blue" style="margin:2px 0 2px 4px">${b}</span>`).join('')
+            :'<span class="badge b-gray">None</span>'}
+        </span>
+      </div>
+      <div class="ov-row">
+        <span class="ov-label">Shares Pledged?</span>
+        <span class="ov-val" style="max-width:60%;text-align:right">
+          ${pledged.length
+            ?pledged.map(b=>`<span class="badge b-coral" style="margin:2px 0 2px 4px">${b}</span>`).join('')
+            :'<span class="badge b-green">No pledge</span>'}
+        </span>
+      </div>
+    </div>
+
+    <!-- COMBINED PORTFOLIO CARD (person) -->
+    <div style="background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:14px;margin-bottom:14px">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px">💼 Portfolio — ${MKT_EMOJI[person]} ${MKT_LABEL[person]}</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <div style="flex:1;background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.2);border-radius:12px;padding:12px;text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;font-weight:600">📈 Invested</div>
+          <div style="font-family:var(--fd);font-size:18px;font-weight:800;color:var(--amber)">₹${fmtINR(inv)}</div>
+        </div>
+        <div style="flex:1;background:rgba(91,156,246,.08);border:1px solid rgba(91,156,246,.2);border-radius:12px;padding:12px;text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;font-weight:600">💧 Liquid</div>
+          <div style="font-family:var(--fd);font-size:18px;font-weight:800;color:var(--blue)">₹${fmtINR(totalLiquid)}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.22);border-radius:12px">
+        <span style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px">Total</span>
+        <span style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--purple)">₹${fmtINR(inv+totalLiquid)}</span>
+      </div>
+    </div>
+
+    <!-- PERSON-LEVEL EXPIRY TRACKER -->
+    <div class="s-label-row">
+      <span>Expiry Tracker (All Brokers)</span>
+      ${urgentExp?`<span class="badge b-coral">🔴 ${urgentExp} ≤1 month</span>`:exp.length?`<span class="badge b-gray">${exp.length} tracked</span>`:''}
+    </div>
+    <div class="card">
+      ${exp.length
+        ?exp.map(e=>`
+          <div class="exp-item">
+            ${expBadgeHTML(e.expiry)}
+            <div class="exp-info">
+              <div class="pos-stock" style="font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px">
+                <span class="pos-type-badge ${e.type==='LONG'?'pos-long':'pos-short'}" style="font-size:9px;padding:2px 6px">${e.type==='LONG'?'↑ L':'↓ S'}</span>
+                ${e.contract}
+              </div>
+              <div class="exp-meta" style="margin-top:4px;display:flex;flex-wrap:wrap;gap:6px">
+                <span style="background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;color:var(--blue)">🏦 ${e.brokerName}</span>
+                <span style="background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;color:var(--text)">📅 ${new Date(e.expiry).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</span>
+                ${e.qty?`<span style="color:var(--muted);font-size:11px;padding:2px 4px">${e.qty} qty</span>`:''}
+                ${e.note?`<span style="color:var(--amber);font-size:11px;padding:2px 4px">${e.note}</span>`:''}
+              </div>
+            </div>
+          </div>`).join('')
+        :'<div class="empty"><div class="empty-icon">📅</div>No expiries tracked<br><small style="font-size:11px">Add an expiry date when adding a position below</small></div>'}
+    </div>
+
+    <!-- BANK ACCOUNTS -->
+    <div class="s-label-row">
+      <span>🏦 Bank Accounts</span>
+      <button class="btn btn-blue btn-sm" onclick="openAddBank('${person}')">+ Add Bank</button>
+    </div>
+    <div class="bank-section">
+      ${bankAccounts.length
+        ?bankAccounts.map(a=>`
+          <div class="bank-entry">
+            <div class="bank-entry-info">
+              <div class="bank-name">${a.name}</div>
+              ${a.acno?`<div class="bank-acno">••••${a.acno}</div>`:''}
+            </div>
+            <div class="bank-bal" onclick="editBankBalance('${person}',${a.id})">₹${fmtINR(a.balance||0)}</div>
+            <button class="del" onclick="deleteBank('${person}',${a.id})">×</button>
+          </div>`).join('')
+        :'<div class="empty-sm">No bank accounts yet<br><small style="font-size:11px">Tap + Add Bank to track balances</small></div>'}
+    </div>
+
+    <!-- BROKERS -->
+    <div class="s-label">Brokers</div>
+    ${pData.brokers.map((b,i)=>_brokerCard(person,i,b)).join('')}
+  `;
+}
+
+function _brokerCard(person,idx,broker){
+  const cardId=`bcard-${person}-${idx}`;
+  const inv=Number(broker.invested||0);
+  const fund=Number(broker.availableFund||0);
+  const posCount=broker.positions.length;
+  const withExp=broker.positions.filter(p=>p.expiry);
+  const urgent=withExp.filter(p=>{const d=daysUntil(p.expiry);return d>=0&&d<=30;}).length;
+
+  // Build meta line
+  const metaParts=[];
+  if(inv>0)metaParts.push('₹'+fmtINR(inv));
+  if(posCount)metaParts.push(posCount+' pos');
+  if(broker.pledged)metaParts.push('🔒 Pledged');
+  if(urgent)metaParts.push('🔴 '+urgent+' exp ≤2wk');
+  else if(withExp.length)metaParts.push('📅 '+withExp.length+' expir'+(withExp.length!==1?'ies':'y'));
+
+  return `
+    <div class="broker-card" id="${cardId}">
+      <div class="broker-head" onclick="toggleBCard('${cardId}')">
+        <div class="broker-name-area">
+          <div class="broker-name">
+            <span>${broker.name}</span>
+            <button class="broker-edit-btn" onclick="event.stopPropagation();editBrokerName('${person}',${idx})" title="Rename">✏️</button>
+          </div>
+          <div class="broker-meta">${metaParts.length?metaParts.join(' · '):'Tap to expand'}</div>
+        </div>
+        <span class="broker-fund-chip ${fund===0?'zero':''}" onclick="event.stopPropagation();editBrokerFund('${person}',${idx})" title="Available Fund">💰 ₹${fmtINR(fund)}</span>
+        <span class="broker-chevron">⌄</span>
+      </div>
+      <div class="broker-body">
+
+        <!-- Invested -->
+        <div class="b-row">
+          <span class="b-row-label">Invested Amount</span>
+          <div style="text-align:right">
+            <div class="b-inv-val" onclick="editBrokerInvested('${person}',${idx})">₹${fmtINR(inv)}</div>
+            <div class="inv-hint">tap to edit</div>
+          </div>
+        </div>
+
+        <!-- Available Fund -->
+        <div class="b-row">
+          <span class="b-row-label">💰 Available Fund</span>
+          <div style="text-align:right">
+            <div class="fund-val" onclick="editBrokerFund('${person}',${idx})">₹${fmtINR(fund)}</div>
+            <div class="inv-hint">tap to edit</div>
+          </div>
+        </div>
+
+        <!-- Pledged -->
+        <div class="b-row">
+          <span class="b-row-label">Shares Pledged?</span>
+          <div class="tog-pair">
+            <button class="tog-btn tog-yes ${broker.pledged?'sel':''}" onclick="setBrokerPledge('${person}',${idx},true)">Yes</button>
+            <button class="tog-btn tog-no ${!broker.pledged?'sel':''}" onclick="setBrokerPledge('${person}',${idx},false)">No</button>
+          </div>
+        </div>
+
+        <!-- POSITIONS (with inline expiry) -->
+        <div class="sec-head">
+          <span class="sec-title">📊 Open Positions</span>
+          <button class="btn btn-blue btn-sm" onclick="openAddPosition('${person}',${idx})">+ Add</button>
+        </div>
+        <div>
+          ${broker.positions.length
+            ?broker.positions.map(p=>`
+              <div class="pos-item" style="align-items:flex-start">
+                <span class="pos-type-badge ${p.type==='LONG'?'pos-long':'pos-short'}" style="margin-top:2px">${p.type==='LONG'?'↑ LONG':'↓ SHORT'}</span>
+                <div class="pos-info">
+                  <div class="pos-stock">${p.stock}</div>
+                  <div class="pos-detail">${p.qty} qty @ ₹${fmtINR(p.avgPrice)}${p.note?' · '+p.note:''}</div>
+                  ${p.expiry?`<div style="margin-top:4px">${expPillHTML(p.expiry)}</div>`:''}
+                </div>
+                <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
+                  <button class="btn btn-ghost btn-sm" style="padding:5px 10px;font-size:11px;color:var(--amber);border-color:rgba(245,200,66,.3)" onclick="openEditPosition('${person}',${idx},${p.id})">✏️ Edit</button>
+                  <button class="btn btn-coral btn-sm" style="padding:5px 10px;font-size:11px" onclick="closePosition('${person}',${idx},${p.id})">✓ Close</button>
+                </div>
+              </div>`).join('')
+            :'<div class="empty-sm">No open positions</div>'}
+        </div>
+
+      </div>
+    </div>`;
+}
+
+// ─── Broker interactions ───────────────────────────────────────
+function toggleBCard(id){
+  document.getElementById(id).classList.toggle('open');
+}
+
+function editBrokerName(person,idx){
+  const data=getMkt();
+  const cur=data[person].brokers[idx].name;
+  const n=prompt('Rename broker:',cur);
+  if(n&&n.trim()){
+    data[person].brokers[idx].name=n.trim();
+    saveMkt(data);
+    renderPersonPane(person);
+    toast('Broker renamed ✓');
+  }
+}
+
+function editBrokerInvested(person,idx){
+  const data=getMkt();
+  const cur=data[person].brokers[idx].invested||0;
+  const v=prompt('Invested amount in ₹ (e.g. 250000):',cur);
+  if(v===null)return;
+  const num=Number(String(v).replace(/[^0-9.]/g,''));
+  data[person].brokers[idx].invested=isNaN(num)?0:num;
+  saveMkt(data);
+  renderPersonPane(person);
+  renderTodayStats();
+  if(_mktCurrentTab==='summary')renderMktSummary();
+  toast('Updated ✓');
+}
+
+function editBrokerFund(person,idx){
+  const data=getMkt();
+  const cur=data[person].brokers[idx].availableFund||0;
+  const v=prompt('Available fund in ₹ (cash/margin available in this broker account):',cur);
+  if(v===null)return;
+  const num=Number(String(v).replace(/[^0-9.]/g,''));
+  data[person].brokers[idx].availableFund=isNaN(num)?0:num;
+  saveMkt(data);
+  renderPersonPane(person);
+  if(_mktCurrentTab==='summary')renderMktSummary();
+  toast('Available fund updated ✓');
+}
+
+function setBrokerPledge(person,idx,val){
+  const data=getMkt();
+  data[person].brokers[idx].pledged=val;
+  saveMkt(data);
+  renderPersonPane(person);
+}
+
+// ─── Positions ────────────────────────────────────────────────
+let _mfCtx={person:null,idx:null};
+let _mfPosType='LONG';
+
+function openAddPosition(person,idx){
+  _mfCtx={person,idx};
+  _mfPosType='LONG';
+  openMktSheet('Add Position — '+getMkt()[person].brokers[idx].name,`
+    <input class="field" id="mfStock" placeholder="Stock / Symbol (e.g. RELIANCE, BANKNIFTY)" style="text-transform:uppercase;letter-spacing:.5px">
+    <div class="tog-pair" style="margin-bottom:10px">
+      <button class="tog-btn tog-yes sel" id="mfLong" style="flex:1" onclick="mfSetPosType('LONG')">↑ LONG</button>
+      <button class="tog-btn tog-no" id="mfShort" style="flex:1" onclick="mfSetPosType('SHORT')">↓ SHORT</button>
+    </div>
+    <div class="field-row" style="margin-bottom:8px">
+      <input class="field" id="mfQty" type="number" placeholder="Qty / Lots" style="margin:0;flex:1">
+      <input class="field" id="mfAvg" type="number" placeholder="Avg Price ₹" style="margin:0;flex:1">
+    </div>
+    <input class="field" id="mfPosNote" placeholder="Note (optional, e.g. target ₹2600)">
+    <div style="margin-bottom:4px"><label style="font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.8px;text-transform:uppercase">📅 Expiry Date <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional — for F&O / Options)</span></label></div>
+    <input class="field" type="date" id="mfExpiry">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+      <span style="font-size:10px;color:var(--muted)">Warning colors:</span>
+      <span style="font-size:10px;color:#4ade80">🟢 >3 months</span>
+      <span style="font-size:10px;color:#5b9cf6">🔵 ≤3 months</span>
+      <span style="font-size:10px;color:#f5c842">🟡 ≤2 months</span>
+      <span style="font-size:10px;color:#ff6b5b">🔴 ≤1 month</span>
+    </div>
+    <button class="btn btn-blue btn-full" onclick="submitPosition()">Add Position</button>
+  `);
+  setTimeout(()=>{const el=document.getElementById('mfStock');if(el)el.focus();},200);
+}
+
+function mfSetPosType(t){
+  _mfPosType=t;
+  const ld=document.getElementById('mfLong'),sd=document.getElementById('mfShort');
+  if(ld)ld.className='tog-btn tog-yes'+(t==='LONG'?' sel':'');
+  if(sd)sd.className='tog-btn tog-no'+(t==='SHORT'?' sel':'');
+}
+
+function submitPosition(){
+  const stock=(document.getElementById('mfStock').value||'').trim().toUpperCase();
+  const qty=Number(document.getElementById('mfQty').value);
+  const avg=Number(document.getElementById('mfAvg').value);
+  const note=(document.getElementById('mfPosNote').value||'').trim();
+  const expiry=(document.getElementById('mfExpiry').value||'').trim();
+  if(!stock){toast('Enter stock name');return;}
+  if(!qty||qty<=0){toast('Enter valid qty');return;}
+  if(!avg||avg<=0){toast('Enter avg price');return;}
+  const data=getMkt();
+  data[_mfCtx.person].brokers[_mfCtx.idx].positions.push({id:Date.now(),stock,type:_mfPosType,qty,avgPrice:avg,note,expiry});
+  saveMkt(data);
+  closeMktSheet();
+  renderPersonPane(_mfCtx.person);
+  if(_mktCurrentTab==='summary')renderMktSummary();
+  toast('Position added ✓');
+}
+
+function closePosition(person,idx,posId){
+  const data=getMkt();
+  const pos=data[person].brokers[idx].positions.find(p=>p.id===posId);
+  if(!pos)return;
+  if(!confirm(`Close position: ${pos.stock} (${pos.type}) · ${pos.qty} qty?\n\nThis will remove it from Open Positions.`))return;
+  data[person].brokers[idx].positions=data[person].brokers[idx].positions.filter(p=>p.id!==posId);
+  saveMkt(data);
+  renderPersonPane(person);
+  if(_mktCurrentTab==='summary')renderMktSummary();
+  toast(`${pos.stock} position closed ✓`);
+}
+
+let _mfEditCtx={person:null,idx:null,posId:null};
+let _mfEditPosType='LONG';
+
+function openEditPosition(person,idx,posId){
+  const data=getMkt();
+  const pos=data[person].brokers[idx].positions.find(p=>p.id===posId);
+  if(!pos)return;
+  _mfEditCtx={person,idx,posId};
+  _mfEditPosType=pos.type||'LONG';
+  openMktSheet('Edit Position — '+data[person].brokers[idx].name,`
+    <input class="field" id="mfEStock" value="${pos.stock}" placeholder="Stock / Symbol" style="text-transform:uppercase;letter-spacing:.5px">
+    <div class="tog-pair" style="margin-bottom:10px">
+      <button class="tog-btn tog-yes ${_mfEditPosType==='LONG'?'sel':''}" id="mfELong" style="flex:1" onclick="mfSetEditPosType('LONG')">↑ LONG</button>
+      <button class="tog-btn tog-no ${_mfEditPosType==='SHORT'?'sel':''}" id="mfEShort" style="flex:1" onclick="mfSetEditPosType('SHORT')">↓ SHORT</button>
+    </div>
+    <div class="field-row" style="margin-bottom:8px">
+      <input class="field" id="mfEQty" type="number" value="${pos.qty}" placeholder="Qty / Lots" style="margin:0;flex:1">
+      <input class="field" id="mfEAvg" type="number" value="${pos.avgPrice}" placeholder="Avg Price ₹" style="margin:0;flex:1">
+    </div>
+    <input class="field" id="mfENote" value="${pos.note||''}" placeholder="Note (optional)">
+    <div style="margin-bottom:4px"><label style="font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.8px;text-transform:uppercase">📅 Expiry Date <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label></div>
+    <input class="field" type="date" id="mfEExpiry" value="${pos.expiry||''}">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+      <span style="font-size:10px;color:var(--muted)">Warning colors:</span>
+      <span style="font-size:10px;color:#4ade80">🟢 >3 months</span>
+      <span style="font-size:10px;color:#5b9cf6">🔵 ≤3 months</span>
+      <span style="font-size:10px;color:#f5c842">🟡 ≤2 months</span>
+      <span style="font-size:10px;color:#ff6b5b">🔴 ≤1 month</span>
+    </div>
+    <button class="btn btn-amber btn-full" onclick="submitEditPosition()">Save Changes</button>
+  `);
+}
+
+function mfSetEditPosType(t){
+  _mfEditPosType=t;
+  const ld=document.getElementById('mfELong'),sd=document.getElementById('mfEShort');
+  if(ld)ld.className='tog-btn tog-yes'+(t==='LONG'?' sel':'');
+  if(sd)sd.className='tog-btn tog-no'+(t==='SHORT'?' sel':'');
+}
+
+function submitEditPosition(){
+  const stock=(document.getElementById('mfEStock').value||'').trim().toUpperCase();
+  const qty=Number(document.getElementById('mfEQty').value);
+  const avg=Number(document.getElementById('mfEAvg').value);
+  const note=(document.getElementById('mfENote').value||'').trim();
+  const expiry=(document.getElementById('mfEExpiry').value||'').trim();
+  if(!stock){toast('Enter stock name');return;}
+  if(!qty||qty<=0){toast('Enter valid qty');return;}
+  if(!avg||avg<=0){toast('Enter avg price');return;}
+  const data=getMkt();
+  const positions=data[_mfEditCtx.person].brokers[_mfEditCtx.idx].positions;
+  const pos=positions.find(p=>p.id===_mfEditCtx.posId);
+  if(!pos){toast('Position not found');return;}
+  pos.stock=stock; pos.type=_mfEditPosType; pos.qty=qty; pos.avgPrice=avg; pos.note=note; pos.expiry=expiry;
+  saveMkt(data);
+  closeMktSheet();
+  renderPersonPane(_mfEditCtx.person);
+  if(_mktCurrentTab==='summary')renderMktSummary();
+  toast(`${stock} updated ✓`);
+}
+
+// ─── Bank Accounts ────────────────────────────────────────────
+function openAddBank(person){
+  openMktSheet('Add Bank Account — '+MKT_EMOJI[person]+' '+MKT_LABEL[person],`
+    <input class="field" id="bkName" placeholder="Bank name (e.g. SBI, HDFC, Canara)">
+    <input class="field" id="bkAcno" placeholder="Account last 4 digits or nick (optional)">
+    <input class="field" id="bkBal" type="number" placeholder="Current balance ₹">
+    <button class="btn btn-blue btn-full" onclick="submitAddBank('${person}')">Add Bank Account</button>
+  `);
+  setTimeout(()=>{const el=document.getElementById('bkName');if(el)el.focus();},200);
+}
+function submitAddBank(person){
+  const name=(document.getElementById('bkName').value||'').trim();
+  const acno=(document.getElementById('bkAcno').value||'').trim();
+  const bal=Number(document.getElementById('bkBal').value||0);
+  if(!name){toast('Enter bank name');return;}
+  const data=getMkt();
+  if(!data[person].bankAccounts)data[person].bankAccounts=[];
+  data[person].bankAccounts.push({id:Date.now(),name,acno,balance:bal});
+  saveMkt(data);
+  closeMktSheet();
+  renderPersonPane(person);
+  if(_mktCurrentTab==='summary')renderMktSummary();
+  toast('Bank account added ✓');
+}
+function editBankBalance(person,id){
+  const data=getMkt();
+  const acc=(data[person].bankAccounts||[]).find(a=>a.id===id);
+  if(!acc)return;
+  const v=prompt(`Balance in ${acc.name}${acc.acno?' ('+acc.acno+')':''}:`,acc.balance||0);
+  if(v===null)return;
+  const num=Number(String(v).replace(/[^0-9.]/g,''));
+  acc.balance=isNaN(num)?0:num;
+  saveMkt(data);
+  renderPersonPane(person);
+  if(_mktCurrentTab==='summary')renderMktSummary();
+  toast('Balance updated ✓');
+}
+function deleteBank(person,id){
+  const data=getMkt();
+  data[person].bankAccounts=(data[person].bankAccounts||[]).filter(a=>a.id!==id);
+  saveMkt(data);
+  renderPersonPane(person);
+  if(_mktCurrentTab==='summary')renderMktSummary();
+  toast('Removed ✓');
+}
+
+// ─── Bottom Sheet ──────────────────────────────────────────────
+function openMktSheet(title,bodyHTML){
+  document.getElementById('mktSheetTitle').textContent=title;
+  document.getElementById('mktSheetBody').innerHTML=bodyHTML;
+  document.getElementById('mktOverlay').classList.add('show');
+}
+function closeMktSheet(){
+  document.getElementById('mktOverlay').classList.remove('show');
+}
+function closeMktSheetOutside(e){
+  if(e.target===document.getElementById('mktOverlay'))closeMktSheet();
+}
+
+// ── School ────────────────────────────────────────────────────
+
+// ─ Inner tab switch ─
+let _schTab='routine';
+function schTab(btn,tab){
+  document.querySelectorAll('.sch-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.sch-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('sch-pane-'+tab).classList.add('active');
+  _schTab=tab;
+  if(tab==='routine')renderSchRoutine();
+  else if(tab==='provisional')renderProvList();
+  else if(tab==='tasks')renderSchoolTasks();
+  renderNotifBars();
+}
+
+// ─ Tasks ─
+function addSchoolTask(){
+  const txt=document.getElementById('schoolTask').value.trim();if(!txt)return;
+  const t=S.get('schoolTasks');
+  t.push({id:Date.now(),text:txt,priority:document.getElementById('schoolPriority').value,done:false});
+  S.set('schoolTasks',t);document.getElementById('schoolTask').value='';renderSchoolTasks();
+}
+function toggleSchoolTask(id){const t=S.get('schoolTasks'),x=t.find(v=>v.id===id);if(x)x.done=!x.done;S.set('schoolTasks',t);renderSchoolTasks();}
+function deleteSchoolTask(id){S.set('schoolTasks',S.get('schoolTasks').filter(x=>x.id!==id));renderSchoolTasks();}
+const PC={urgent:'pri-urgent',normal:'pri-normal',low:'pri-low'};
+function renderSchoolTasks(){
+  const t=S.get('schoolTasks'),el=document.getElementById('schoolTaskList');
+  if(!t.length){el.innerHTML='<div class="empty"><div class="empty-icon">🏫</div>No school tasks</div>';return;}
+  el.innerHTML=t.map(x=>`<div class="list-item">
+    <div class="pri-dot ${PC[x.priority]}"></div>
+    <div class="check ${x.done?'done':''}" onclick="toggleSchoolTask(${x.id})"></div>
+    <div class="list-main"><div class="list-title ${x.done?'done':''}">${x.text}</div></div>
+    <button class="del" onclick="deleteSchoolTask(${x.id})">×</button></div>`).join('');
+}
+function saveSchoolNotes(){S.set('schoolNotesText',document.getElementById('schoolNotes').value);toast('Notes saved ✓');}
+
+// ─ Routine data ─
+const SCH_DAYS=['Mon','Tue','Wed','Thu','Fri','Sat'];
+const SCH_DAY_FULL={Mon:'Monday',Tue:'Tuesday',Wed:'Wednesday',Thu:'Thursday',Fri:'Friday',Sat:'Saturday'};
+const SCH_PERIODS={Mon:8,Tue:8,Wed:8,Thu:8,Fri:8,Sat:4};
+const ROUTINE_KEY='school_routine_v1';
+let _schDay='Mon';
+
+function getRoutine(){
+  try{
+    const r=JSON.parse(localStorage.getItem(ROUTINE_KEY))||{};
+    SCH_DAYS.forEach(d=>{
+      if(!r[d])r[d]={};
+      const total=SCH_PERIODS[d];
+      for(let p=1;p<=total;p++){if(!r[d][p])r[d][p]={cls:'',section:'',subject:''};}
+    });
+    return r;
+  }catch{
+    const r={};
+    SCH_DAYS.forEach(d=>{r[d]={};for(let p=1;p<=SCH_PERIODS[d];p++)r[d][p]={cls:'',section:'',subject:''};});
+    return r;
+  }
+}
+function saveRoutine(r){localStorage.setItem(ROUTINE_KEY,JSON.stringify(r));}
+
+// detect today's day name
+function todayDayName(){
+  const n=new Date().getDay(); // 0=Sun,1=Mon,...6=Sat
+  const map={1:'Mon',2:'Tue',3:'Wed',4:'Thu',5:'Fri',6:'Sat'};
+  return map[n]||null;
+}
+
+// ─ Period times storage (same for all days) ─
+const PERIOD_TIMES_KEY='school_period_times_v1';
+// Sensible defaults: 8 periods starting 10:30, 40 min each, tiffin after 4
+const DEFAULT_TIMES=[
+  {start:'10:30',end:'11:10'},
+  {start:'11:10',end:'11:50'},
+  {start:'11:50',end:'12:30'},
+  {start:'12:30',end:'13:10'},
+  // tiffin here
+  {start:'13:40',end:'14:20'},
+  {start:'14:20',end:'15:00'},
+  {start:'15:00',end:'15:40'},
+  {start:'15:40',end:'16:20'}
+];
+function getPeriodTimes(){
+  try{
+    const t=JSON.parse(localStorage.getItem(PERIOD_TIMES_KEY));
+    if(t&&t.length===8)return t;
+  }catch{}
+  return DEFAULT_TIMES.map(x=>({...x}));
+}
+function savePeriodTimes(t){localStorage.setItem(PERIOD_TIMES_KEY,JSON.stringify(t));}
+function fmtTime(t){
+  if(!t)return'';
+  try{
+    const [h,m]=t.split(':');
+    const hr=Number(h),mn=m;
+    const ampm=hr<12?'AM':'PM';
+    const hr12=hr===0?12:hr>12?hr-12:hr;
+    return`${hr12}:${mn} ${ampm}`;
+  }catch{return t;}
+}
+
+// ─ Render routine ─
+function renderSchRoutine(){
+  const today=todayDayName();
+  const dtEl=document.getElementById('schDayTabs');
+  dtEl.innerHTML=SCH_DAYS.map(d=>`
+    <button class="day-btn${_schDay===d?' active':''}${today===d?' today':''}" onclick="switchSchDay('${d}')">
+      ${d}${today===d?' •':''}
+    </button>`).join('');
+  renderSchPeriods();
+}
+
+function switchSchDay(d){
+  _schDay=d;
+  renderSchRoutine();
+}
+
+function renderSchPeriods(){
+  const routine=getRoutine();
+  const times=getPeriodTimes();
+  const day=routine[_schDay];
+  const total=SCH_PERIODS[_schDay];
+  const el=document.getElementById('schPeriodList');
+  let html='';
+  for(let p=1;p<=total;p++){
+    const slot=day[p]||{cls:'',section:'',subject:''};
+    const filled=slot.cls||slot.subject;
+    const clsLabel=slot.cls?(slot.cls+(slot.section?' '+slot.section:'')):'—';
+    const subLabel=slot.subject||'Tap to add';
+    const t=times[p-1];
+    const timeStr=t?(fmtTime(t.start)+'\n'+fmtTime(t.end)):'';
+    html+=`
+      <div class="period-row" onclick="openEditPeriod('${_schDay}',${p})">
+        <div class="period-num">
+          <span>${p}</span>
+          ${timeStr?`<span class="period-time">${timeStr}</span>`:''}
+        </div>
+        <div class="period-cell ${filled?'filled':'empty-cell'}">
+          <div class="period-class-info">
+            <div class="period-cls">${clsLabel}</div>
+            <div class="period-sub">${subLabel}</div>
+          </div>
+          <span class="period-edit-icon">✏️</span>
+        </div>
+      </div>`;
+    if(p===4&&total>4){
+      const tiffStart=times[3]?fmtTime(times[3].end):'';
+      const tiffEnd=times[4]?fmtTime(times[4].start):'';
+      const tiffTime=tiffStart&&tiffEnd?` · ${tiffStart} – ${tiffEnd}`:'';
+      html+=`<div class="tiffin-bar"><span style="font-size:16px">🍱</span><span class="tiffin-label">Tiffin Break${tiffTime}</span></div>`;
+    }
+  }
+  el.innerHTML=html;
+}
+
+// ─ Period times settings sheet ─
+function openPeriodTimesSheet(){
+  const times=getPeriodTimes();
+  const rows=times.map((t,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:11px;font-weight:800;color:var(--muted);width:22px;flex-shrink:0">P${i+1}</span>
+      <input type="time" class="field" id="ptStart${i}" value="${t.start||''}" style="margin:0;flex:1;padding:8px 10px">
+      <span style="font-size:11px;color:var(--muted);flex-shrink:0">to</span>
+      <input type="time" class="field" id="ptEnd${i}" value="${t.end||''}" style="margin:0;flex:1;padding:8px 10px">
+    </div>
+    ${i===3?`<div class="tiffin-bar" style="margin:0 -16px"><span style="font-size:14px">🍱</span><span class="tiffin-label">Tiffin Break</span></div>`:''}
+  `).join('');
+  openMktSheet('⏱ Period Timings (All Days)',`
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Same timings apply to all days · 8 periods shown, Sat uses P1–P4</div>
+    ${rows}
+    <div style="margin-top:14px;display:flex;gap:8px">
+      <button class="btn btn-blue btn-full" onclick="savePeriodTimesFromSheet()">Save Timings</button>
+      <button class="btn btn-ghost" style="flex-shrink:0" onclick="resetPeriodTimes()">Reset</button>
+    </div>
+  `);
+}
+
+function savePeriodTimesFromSheet(){
+  const times=[];
+  for(let i=0;i<8;i++){
+    const start=(document.getElementById('ptStart'+i).value||'').trim();
+    const end=(document.getElementById('ptEnd'+i).value||'').trim();
+    times.push({start,end});
+  }
+  savePeriodTimes(times);
+  closeMktSheet();
+  renderSchPeriods();
+  toast('Period timings saved ✓');
+}
+
+function resetPeriodTimes(){
+  if(!confirm('Reset to default timings?'))return;
+  savePeriodTimes(DEFAULT_TIMES.map(x=>({...x})));
+  closeMktSheet();
+  renderSchPeriods();
+  toast('Timings reset ✓');
+}
+
+// ─ Edit period bottom sheet ─
+let _schEditCtx={day:null,period:null};
+
+function openEditPeriod(day,period){
+  _schEditCtx={day,period};
+  const routine=getRoutine();
+  const times=getPeriodTimes();
+  const slot=routine[day][period]||{cls:'',section:'A',subject:'English'};
+  const t=times[period-1];
+  const timeLabel=t&&t.start?` · ${fmtTime(t.start)} – ${fmtTime(t.end)}`:'';
+  openMktSheet(`${SCH_DAY_FULL[day]} — Period ${period}${timeLabel}`,`
+    <div style="font-size:11px;color:var(--muted);margin-bottom:12px">Permanent routine · stays until you change it</div>
+    <div class="field-row" style="margin-bottom:8px">
+      <input class="field" id="schPCls" value="${slot.cls||''}" placeholder="Class (e.g. 10, 11)" style="margin:0;flex:2">
+      <input class="field" id="schPSec" value="${slot.section||'A'}" placeholder="Section" style="margin:0;flex:1">
+    </div>
+    <input class="field" id="schPSub" value="${slot.subject||'English'}" placeholder="Subject">
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-blue btn-full" onclick="savePeriod()">Save</button>
+      <button class="btn btn-ghost" style="flex-shrink:0" onclick="clearPeriod()">Clear</button>
+    </div>
+  `);
+  setTimeout(()=>document.getElementById('schPCls')?.focus(),200);
+}
+
+function savePeriod(){
+  const cls=(document.getElementById('schPCls').value||'').trim();
+  const section=(document.getElementById('schPSec').value||'').trim();
+  const subject=(document.getElementById('schPSub').value||'').trim();
+  const r=getRoutine();
+  r[_schEditCtx.day][_schEditCtx.period]={cls,section,subject};
+  saveRoutine(r);
+  closeMktSheet();
+  renderSchPeriods();
+  toast(`Period ${_schEditCtx.period} saved ✓`);
+}
+
+function clearPeriod(){
+  if(!confirm('Clear this period slot?'))return;
+  const r=getRoutine();
+  r[_schEditCtx.day][_schEditCtx.period]={cls:'',section:'',subject:''};
+  saveRoutine(r);
+  closeMktSheet();
+  renderSchPeriods();
+  toast('Period cleared');
+}
+
+// ─ Provisional routine ─
+const PROV_KEY='school_prov_v1';
+
+function getProv(){
+  try{return JSON.parse(localStorage.getItem(PROV_KEY))||[];}catch{return[];}
+}
+function saveProv(p){localStorage.setItem(PROV_KEY,JSON.stringify(p));}
+
+function addProvEntry(){
+  const date=document.getElementById('provDate').value;
+  const period=Number(document.getElementById('provPeriod').value);
+  const cls=(document.getElementById('provClass').value||'').trim();
+  const section=(document.getElementById('provSection').value||'').trim();
+  const subject=(document.getElementById('provSubject').value||'').trim();
+  const note=(document.getElementById('provNote').value||'').trim();
+  if(!date){toast('Select a date');return;}
+  if(!cls&&!subject){toast('Enter class or subject');return;}
+  const p=getProv();
+  // find existing entry for this date or create
+  let dayEntry=p.find(x=>x.date===date);
+  if(!dayEntry){dayEntry={date,entries:[]};p.push(dayEntry);}
+  dayEntry.entries.push({id:Date.now(),period,cls,section,subject,note});
+  // sort entries by period
+  dayEntry.entries.sort((a,b)=>a.period-b.period);
+  // sort days by date
+  p.sort((a,b)=>new Date(a.date)-new Date(b.date));
+  saveProv(p);
+  // clear inputs
+  document.getElementById('provClass').value='';
+  document.getElementById('provSection').value='A';
+  document.getElementById('provSubject').value='English';
+  document.getElementById('provNote').value='';
+  renderProvList();
+  toast('Provisional class added ✓');
+}
+
+function deleteProvEntry(date,entryId){
+  const p=getProv();
+  const dayEntry=p.find(x=>x.date===date);
+  if(!dayEntry)return;
+  dayEntry.entries=dayEntry.entries.filter(e=>e.id!==entryId);
+  // remove day if no entries
+  const updated=p.filter(x=>x.entries.length>0);
+  saveProv(updated);
+  renderProvList();
+  toast('Removed ✓');
+}
+
+function deleteProvDay(date){
+  if(!confirm('Remove all provisional classes for this date?'))return;
+  saveProv(getProv().filter(x=>x.date!==date));
+  renderProvList();
+  toast('Day removed ✓');
+}
+
+function renderProvList(){
+  const p=getProv();
+  const el=document.getElementById('provList');
+  const todayStr=new Date().toISOString().split('T')[0];
+  // remove past days older than yesterday
+  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  const filtered=p.filter(x=>new Date(x.date)>=yesterday);
+  if(filtered.length!==p.length)saveProv(filtered);
+  if(!filtered.length){
+    el.innerHTML='<div class="empty"><div class="empty-icon">🔀</div>No provisional classes added<br><small style="font-size:11px">Use this for surprise extra/substitute classes</small></div>';
+    return;
+  }
+  el.innerHTML=filtered.map(day=>{
+    const isToday=day.date===todayStr;
+    const dateLabel=new Date(day.date+'T00:00:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+    return`<div class="prov-card">
+      <div class="prov-date-head">
+        <span class="prov-date-label">📆 ${dateLabel}</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          ${isToday?'<span class="prov-today-badge">TODAY</span>':''}
+          <button class="del" onclick="deleteProvDay('${day.date}')">×</button>
+        </div>
+      </div>
+      ${day.entries.map(e=>`
+        <div class="prov-entry">
+          <span class="prov-period-badge">P${e.period}</span>
+          <div class="prov-info">
+            <div class="prov-cls">${e.cls?(e.cls+(e.section?' '+e.section:'')):'—'} ${e.subject?'· '+e.subject:''}</div>
+            ${e.note?`<div class="prov-sub">${e.note}</div>`:''}
+          </div>
+          <button class="del" onclick="deleteProvEntry('${day.date}',${e.id})">×</button>
+        </div>`).join('')}
+    </div>`;
+  }).join('');
+}
+
+// ── Singing ───────────────────────────────────────────────────
+function logPractice(){
+  const mins=Number(document.getElementById('practiceMinutes').value);if(!mins)return;
+  const p=S.get('practices');
+  p.unshift({id:Date.now(),date:document.getElementById('practiceDate').value||new Date().toISOString().split('T')[0],mins,focus:document.getElementById('practiceFocus').value.trim()});
+  S.set('practices',p);
+  document.getElementById('practiceMinutes').value='';document.getElementById('practiceFocus').value='';
+  renderPractices();renderTodayStats();toast('Session logged ✓');
+}
+function deletePractice(id){S.set('practices',S.get('practices').filter(x=>x.id!==id));renderPractices();}
+function renderPractices(){
+  const p=S.get('practices');
+  const tot=p.reduce((s,x)=>s+x.mins,0);
+  document.getElementById('singingStats').innerHTML=`
+    <div class="stat-card"><div class="stat-label">Sessions</div><div class="stat-value c-coral">${p.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Total practice</div><div class="stat-value c-coral">${tot} min</div></div>
+    <div class="stat-card"><div class="stat-label">Hours total</div><div class="stat-value c-coral">${(tot/60).toFixed(1)} hrs</div></div>
+    <div class="stat-card"><div class="stat-label">Avg per session</div><div class="stat-value c-coral">${p.length?Math.round(tot/p.length):0} min</div></div>`;
+  const el=document.getElementById('practiceList');
+  if(!p.length){el.innerHTML='<div class="empty"><div class="empty-icon">🎵</div>No sessions yet</div>';return;}
+  el.innerHTML=p.map(x=>`<div class="list-item">
+    <div class="list-main"><div class="list-title">${x.focus||'Practice session'}</div><div class="list-sub">${x.date} · ${x.mins} min</div></div>
+    <button class="del" onclick="deletePractice(${x.id})">×</button></div>`).join('');
+}
+function addSongGoal(){
+  const txt=document.getElementById('songGoal').value.trim();if(!txt)return;
+  const g=S.get('songGoals');g.push({id:Date.now(),text:txt,done:false});S.set('songGoals',g);
+  document.getElementById('songGoal').value='';renderSongGoals();
+}
+function toggleSongGoal(id){const g=S.get('songGoals'),x=g.find(v=>v.id===id);if(x)x.done=!x.done;S.set('songGoals',g);renderSongGoals();}
+function deleteSongGoal(id){S.set('songGoals',S.get('songGoals').filter(x=>x.id!==id));renderSongGoals();}
+function renderSongGoals(){
+  const g=S.get('songGoals'),el=document.getElementById('songGoalList');
+  if(!g.length){el.innerHTML='<div class="empty" style="padding:12px 0"><div class="empty-icon">🎶</div>Add songs or goals</div>';return;}
+  el.innerHTML=g.map(x=>`<div class="list-item">
+    <div class="check ${x.done?'done':''}" onclick="toggleSongGoal(${x.id})"></div>
+    <div class="list-main"><div class="list-title ${x.done?'done':''}">${x.text}</div></div>
+    <button class="del" onclick="deleteSongGoal(${x.id})">×</button></div>`).join('');
+}
+
+// ── Pending ───────────────────────────────────────────────────
+let _addStickyOn=false;
+let _addStickyMins=30;
+
+function toggleAddSticky(){
+  _addStickyOn=!_addStickyOn;
+  const sw=document.getElementById('addStickySwitch');
+  const opts=document.getElementById('addStickyOptions');
+  if(_addStickyOn){sw.classList.add('on');opts.style.display='block';}
+  else{sw.classList.remove('on');opts.style.display='none';}
+}
+function selectAddInterval(el,mins){
+  _addStickyMins=mins;
+  document.querySelectorAll('#addStickyIntervalRow .sticky-int-chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function addPending(){
+  const txt=document.getElementById('pendingText').value.trim();if(!txt)return;
+  const area=document.getElementById('pendingArea').value;
+  const personalSub=document.getElementById('pendingPersonalSub').value.trim();
+  const p=S.get('pending');
+  p.push({
+    id:Date.now(),
+    text:txt,
+    area,
+    personalSub:area==='personal'?personalSub:'',
+    added:new Date().toLocaleDateString('en-IN'),
+    sticky:_addStickyOn,
+    stickyMins:_addStickyOn?_addStickyMins:0,
+    stickyLastShown:0
+  });
+  S.set('pending',p);
+  document.getElementById('pendingText').value='';
+  document.getElementById('pendingPersonalSub').value='';
+  // reset sticky toggle
+  _addStickyOn=false;
+  const sw=document.getElementById('addStickySwitch');
+  const opts=document.getElementById('addStickyOptions');
+  if(sw)sw.classList.remove('on');
+  if(opts)opts.style.display='none';
+  renderPending();updateSub();
+  toast(_addStickyOn?'📌 Sticky reminder set ✓':'Added to pending ✓');
+  scheduleStickyCheck();
+}
+function deletePending(id){
+  S.set('pending',S.get('pending').filter(x=>x.id!==id));
+  renderPending();updateSub();
+}
+function toggleStickyOnItem(id){
+  const p=S.get('pending');
+  const x=p.find(v=>v.id===id);
+  if(!x)return;
+  if(x.sticky){
+    // turning off
+    x.sticky=false;x.stickyMins=0;x.stickyLastShown=0;
+    S.set('pending',p);renderPending();toast('📌 Sticky reminder off');
+  } else {
+    // open sheet to set interval
+    openStickyConfigSheet(id);
+  }
+}
+function openStickyConfigSheet(id){
+  const intervals=[15,30,60,90,120,180,240];
+  const p=S.get('pending');
+  const x=p.find(v=>v.id===id);
+  const cur=x?x.stickyMins||60:60;
+  openMktSheet('📌 Sticky Reminder',`
+    <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.5">This item will pop up as a floating reminder on screen at the chosen interval — even after you've closed it.</div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Remind every</div>
+    <div class="sticky-interval-row" style="margin-bottom:16px">
+      ${intervals.map(m=>`<span class="sticky-int-chip${m===cur?' sel':''}" onclick="pickStickyInterval(${id},${m},this)">${m<60?m+' min':m===60?'1 hr':m===90?'1.5 hr':m===120?'2 hr':'3 hr'}</span>`).join('')}
+    </div>
+    <button class="btn btn-teal btn-full" id="stickyConfirmBtn" onclick="confirmStickyOn(${id})">📌 Enable Sticky Reminder</button>
+    <div style="height:6px"></div>
+    <button class="btn btn-ghost btn-full" onclick="closeMktSheet()">Cancel</button>
+  `);
+  window._pendingStickyId=id;
+  window._pendingStickyMins=cur;
+}
+function pickStickyInterval(id,mins,el){
+  window._pendingStickyMins=mins;
+  document.querySelectorAll('.sticky-int-chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function confirmStickyOn(id){
+  const mins=window._pendingStickyMins||60;
+  const p=S.get('pending');
+  const x=p.find(v=>v.id===id);
+  if(!x)return;
+  x.sticky=true;x.stickyMins=mins;x.stickyLastShown=0;
+  S.set('pending',p);
+  closeMktSheet();
+  renderPending();
+  toast('📌 Sticky reminder set every '+_fmtInterval(mins));
+  scheduleStickyCheck();
+}
+function _fmtInterval(m){return m<60?m+' min':m===60?'1 hour':m===90?'1.5 hours':m===120?'2 hours':m===180?'3 hours':'every '+m+' min';}
+
+function renderPending(){
+  const p=S.get('pending'),el=document.getElementById('pendingList');
+  document.getElementById('pendingDot').classList.toggle('visible',p.length>0);
+  if(!p.length){el.innerHTML='<div class="empty"><div class="empty-icon">✅</div>Nothing pending! All clear.</div>';return;}
+  el.innerHTML=p.map(x=>{
+    const stickyOn=!!(x.sticky&&x.stickyMins);
+    return`<div class="list-item">
+      <div class="list-main">
+        <div class="list-title" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          ${x.text}
+          ${stickyOn?`<span class="sticky-badge">📌 every ${_fmtInterval(x.stickyMins)}</span>`:''}
+        </div>
+        <div class="list-sub">${x.area==='personal'&&x.personalSub?x.personalSub:x.area} · Added ${x.added}</div>
+      </div>
+      <span class="badge ${BC[x.area]||'b-gray'}" style="flex-shrink:0">${x.area==='personal'&&x.personalSub?x.personalSub:x.area}</span>
+      <button title="${stickyOn?'Sticky ON — tap to turn off':'Set sticky reminder'}" onclick="toggleStickyOnItem(${x.id})" style="background:${stickyOn?'rgba(45,224,176,.15)':'var(--surface2)'};border:1px solid ${stickyOn?'rgba(45,224,176,.4)':'var(--border2)'};color:${stickyOn?'var(--teal)':'var(--muted)'};border-radius:8px;padding:4px 9px;font-size:14px;cursor:pointer;flex-shrink:0;transition:all .2s">📌</button>
+      <button class="del" onclick="deletePending(${x.id})">×</button>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  STICKY REMINDER ENGINE
+// ══════════════════════════════════════════════════════════════
+let _stickyTimer=null;
+let _stickyQueue=[];
+let _stickySnoozeUntil=0;
+let _stickyCountdownTimer=null;
+let _stickyAutoDismissTimer=null;
+
+const AREA_ICONS={tuition:'🎓',school:'🏫',market:'📈',singing:'🎵',personal:'💡'};
+
+function scheduleStickyCheck(){
+  if(_stickyTimer)clearInterval(_stickyTimer);
+  _stickyTimer=setInterval(checkStickyReminders,60000); // check every minute
+  // also check immediately after a short delay
+  setTimeout(checkStickyReminders,3000);
+}
+
+function checkStickyReminders(){
+  if(document.getElementById('stickyOverlay').classList.contains('visible'))return; // already showing
+  if(Date.now()<_stickySnoozeUntil)return; // snoozed
+  const now=Date.now();
+  const p=S.get('pending');
+  const due=p.filter(x=>x.sticky&&x.stickyMins>0&&(now-(x.stickyLastShown||0))>=(x.stickyMins*60000));
+  if(!due.length)return;
+  _stickyQueue=due.slice(1); // queue remaining
+  showStickyCard(due[0]);
+}
+
+function showStickyCard(item){
+  const icon=AREA_ICONS[item.area]||'📌';
+  const areaLabel=item.area==='personal'&&item.personalSub?item.personalSub:item.area;
+  document.getElementById('stickyIcon').textContent=icon;
+  document.getElementById('stickyArea').textContent=areaLabel.toUpperCase();
+  document.getElementById('stickyText').textContent=item.text;
+  document.getElementById('stickyMeta').textContent='📌 Sticky reminder · every '+_fmtInterval(item.stickyMins);
+  document.getElementById('stickyOverlay').classList.add('visible');
+  // Store id for dismiss
+  document.getElementById('stickyOverlay').dataset.itemId=item.id;
+  // Play a soft chime sound
+  _playStickySound();
+  // Start countdown for auto-dismiss (30 seconds)
+  _startStickyCountdown(30);
+}
+
+function _playStickySound(){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const t=ctx.currentTime;
+    [[523.25,0],[659.25,.12],[783.99,.24]].forEach(([freq,delay])=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.type='sine';o.frequency.value=freq;
+      g.gain.setValueAtTime(0,t+delay);
+      g.gain.linearRampToValueAtTime(.28,t+delay+.04);
+      g.gain.exponentialRampToValueAtTime(.001,t+delay+.55);
+      o.start(t+delay);o.stop(t+delay+.6);
+    });
+  }catch(e){}
+}
+
+function _startStickyCountdown(secs){
+  clearInterval(_stickyCountdownTimer);
+  clearTimeout(_stickyAutoDismissTimer);
+  let remaining=secs;
+  const el=document.getElementById('stickyCountdown');
+  const update=()=>{el.textContent=`Auto-dismiss in ${remaining}s`;};
+  update();
+  _stickyCountdownTimer=setInterval(()=>{
+    remaining--;
+    update();
+    if(remaining<=0){clearInterval(_stickyCountdownTimer);closeStickyOverlay();}
+  },1000);
+}
+
+function _markStickyShown(id){
+  const p=S.get('pending');
+  const x=p.find(v=>v.id===id);
+  if(x){x.stickyLastShown=Date.now();S.set('pending',p);}
+}
+
+function dismissSticky(){
+  const id=Number(document.getElementById('stickyOverlay').dataset.itemId);
+  _markStickyShown(id);
+  closeStickyOverlay();
+  // show next in queue
+  if(_stickyQueue.length){
+    setTimeout(()=>showStickyCard(_stickyQueue.shift()),600);
+  }
+}
+function snoozeSticky(){
+  _stickySnoozeUntil=Date.now()+10*60000; // snooze 10 min
+  closeStickyOverlay();
+  toast('⏰ Snoozed for 10 minutes');
+}
+function closeStickyOverlay(){
+  clearInterval(_stickyCountdownTimer);
+  clearTimeout(_stickyAutoDismissTimer);
+  const el=document.getElementById('stickyOverlay');
+  el.style.animation='stickyOut .22s ease both';
+  el.style.animationFillMode='both';
+  setTimeout(()=>{
+    el.classList.remove('visible');
+    el.style.animation='';
+  },220);
+  document.getElementById('stickyCountdown').textContent='';
+}
+
+// ── Toast ─────────────────────────────────────────────────────
+function toast(msg){
+  let t=document.getElementById('_toast');
+  if(!t){t=document.createElement('div');t.id='_toast';
+    t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:#1d1f28;border:1px solid rgba(45,224,176,.3);color:#2de0b0;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;opacity:0;transition:all .25s;z-index:9999;pointer-events:none;white-space:nowrap';
+    document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(t._t);t._t=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(20px)';},2200);
+}
+
+// ── PWA install prompt ────────────────────────────────────────
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferredPrompt=e;
+  document.getElementById('installBar').classList.add('show');
+});
+document.getElementById('installBtn').addEventListener('click',async()=>{
+  if(!deferredPrompt)return;
+  deferredPrompt.prompt();
+  const{outcome}=await deferredPrompt.userChoice;
+  if(outcome==='accepted')document.getElementById('installBar').classList.remove('show');
+  deferredPrompt=null;
+});
+window.addEventListener('appinstalled',()=>{
+  document.getElementById('installBar').classList.remove('show');
+  toast('App installed! 🎉');
+});
+
+// ── Height fix ────────────────────────────────────────────────
+function setAppHeight(){
+  document.documentElement.style.setProperty('--app-h',window.innerHeight+'px');
+}
+setAppHeight();
+window.addEventListener('resize',setAppHeight);
+window.addEventListener('orientationchange',()=>{setTimeout(setAppHeight,300);});
+
+// ══════════════════════════════════════════════════════════════
+//  UNIFIED NOTIFICATION SYSTEM
+// ══════════════════════════════════════════════════════════════
+
+const _firedNotifs=new Set();
+
+// ─ Feature definitions ─
+// Each feature has: key, label, emoji, defaultConfig
+const NF_DEFS={
+  routine: {
+    key:'nf_routine', emoji:'🏫', label:'School Routine',
+    desc:'Alert before each period starts',
+    default:{on:true, minsBefore:10, sound:'bell'},
+    controls:'routine'
+  },
+  prov: {
+    key:'nf_prov', emoji:'🔀', label:'Provisional Classes',
+    desc:'Alert before extra/substitute periods today',
+    default:{on:true, minsBefore:10, sound:'bell'},
+    controls:'routine' // same timing model as routine
+  },
+  homework: {
+    key:'nf_homework', emoji:'📚', label:'Homework Due',
+    desc:'Remind before homework due date',
+    default:{on:true, daysBefore:1, time:'08:00', sound:'chime'},
+    controls:'homework'
+  },
+  expiry: {
+    key:'nf_expiry', emoji:'📈', label:'Market Expiry',
+    desc:'Alert days before an option/contract expires',
+    default:{on:true, daysBefore:7, sound:'bell'},
+    controls:'expiry'
+  },
+  position: {
+    key:'nf_position', emoji:'📊', label:'Position Review',
+    desc:'Daily reminder to review open positions',
+    default:{on:true, time:'09:00', sound:'beep'},
+    controls:'time'
+  },
+  singing: {
+    key:'nf_singing', emoji:'🎵', label:'Singing Practice',
+    desc:'Daily reminder to practice',
+    default:{on:true, time:'18:00', sound:'chime'},
+    controls:'time'
+  },
+  pending: {
+    key:'nf_pending', emoji:'⏳', label:'Pending Items',
+    desc:'Daily reminder if you have pending tasks',
+    default:{on:true, time:'09:00', sound:'beep'},
+    controls:'time'
+  },
+  tasks: {
+    key:'nf_tasks', emoji:'✅', label:'Daily Tasks',
+    desc:'Morning reminder to set your 3 tasks',
+    default:{on:true, time:'08:00', sound:'bell'},
+    controls:'time'
+  }
+};
+
+const NOTIF_SOUNDS=[
+  {id:'bell',  name:'School Bell', desc:'Classic ring'},
+  {id:'chime', name:'Soft Chime',  desc:'Gentle tone'},
+  {id:'beep',  name:'Sharp Beep',  desc:'Alert beep'},
+  {id:'silent',name:'Silent',      desc:'Banner only'},
+];
+
+function getNFCfg(fid){
+  try{
+    const raw=localStorage.getItem(NF_DEFS[fid].key);
+    if(raw)return{...NF_DEFS[fid].default,...JSON.parse(raw)};
+  }catch{}
+  return{...NF_DEFS[fid].default};
+}
+function setNFCfg(fid,patch){
+  const cur=getNFCfg(fid);
+  localStorage.setItem(NF_DEFS[fid].key,JSON.stringify({...cur,...patch}));
+}
+
+// ─ Sound engine ─
+function playNotifSound(id){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const tone=(freq,start,dur,type='sine',gain=0.4)=>{
+      const o=ctx.createOscillator();const g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.type=type;o.frequency.value=freq;
+      g.gain.setValueAtTime(0,ctx.currentTime+start);
+      g.gain.linearRampToValueAtTime(gain,ctx.currentTime+start+0.01);
+      g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+start+dur);
+      o.start(ctx.currentTime+start);o.stop(ctx.currentTime+start+dur+0.05);
+    };
+    if(id==='bell'){tone(880,0,.08,'square',.35);tone(660,.1,.3,'sine',.3);tone(880,.4,.08,'square',.25);tone(660,.5,.4,'sine',.2);}
+    else if(id==='chime'){tone(1046,0,.5,'sine',.25);tone(1318,.15,.5,'sine',.2);tone(1568,.3,.7,'sine',.18);}
+    else if(id==='beep'){tone(1000,0,.12,'square',.4);tone(1000,.18,.12,'square',.4);tone(1000,.36,.2,'square',.4);}
+  }catch(e){}
+}
+
+// ─ Fire a notification ─
+function fireNotif(fid,title,body,tag){
+  if(Notification.permission!=='granted')return;
+  if(_firedNotifs.has(tag))return;
+  _firedNotifs.add(tag);
+  try{new Notification(title,{body,tag,renotify:true});}catch(e){}
+  const cfg=getNFCfg(fid);
+  if(cfg.sound!=='silent')playNotifSound(cfg.sound);
+}
+
+// ─ Shared helpers ─
+function parseTimeToday(timeStr){
+  if(!timeStr)return null;
+  const [h,m]=timeStr.split(':');
+  const d=new Date();d.setHours(Number(h),Number(m),0,0);return d;
+}
+
+// ─ Master notification checker ─
+function checkAllNotifications(){
+  if(Notification.permission!=='granted')return;
+  const now=new Date();
+  const todayStr=now.toISOString().split('T')[0];
+
+  // 🏫 ROUTINE
+  const rCfg=getNFCfg('routine');
+  if(rCfg.on){
+    const dayName=todayDayName();
+    if(dayName){
+      const routine=getRoutine();
+      const times=getPeriodTimes();
+      const total=SCH_PERIODS[dayName];
+      for(let p=1;p<=total;p++){
+        const slot=(routine[dayName]||{})[p];
+        if(!slot||(!slot.cls&&!slot.subject))continue;
+        const t=times[p-1];if(!t||!t.start)continue;
+        const st=parseTimeToday(t.start);if(!st)continue;
+        const diff=(st-now)/60000;
+        const cls=slot.cls?(slot.cls+(slot.section?' '+slot.section:'')):'';
+        const subj=slot.subject||'';
+        if(rCfg.minsBefore>0&&diff>0&&diff<=rCfg.minsBefore)
+          fireNotif('routine',`🏫 Period ${p} in ${Math.round(diff)} min`,`${cls}${cls&&subj?' · ':''}${subj} — ${fmtTime(t.start)}`,`${todayStr}_R_P${p}_warn`);
+        if(diff>=-1&&diff<=1)
+          fireNotif('routine',`🔔 Period ${p} starting now!`,`${cls}${cls&&subj?' · ':''}${subj}`,`${todayStr}_R_P${p}_now`);
+      }
+    }
+  }
+
+  // 🔀 PROVISIONAL
+  const pvCfg=getNFCfg('prov');
+  if(pvCfg.on){
+    const times=getPeriodTimes();
+    const todayProv=(getProv().find(x=>x.date===todayStr)||{entries:[]}).entries;
+    todayProv.forEach(e=>{
+      const t=times[e.period-1];if(!t||!t.start)return;
+      const st=parseTimeToday(t.start);if(!st)return;
+      const diff=(st-now)/60000;
+      const cls=e.cls?(e.cls+(e.section?' '+e.section:'')):'';
+      if(pvCfg.minsBefore>0&&diff>0&&diff<=pvCfg.minsBefore)
+        fireNotif('prov',`🔀 Provisional P${e.period} in ${Math.round(diff)} min`,`${cls}${cls&&e.subject?' · ':''}${e.subject||''}`,`${todayStr}_PV_P${e.period}_w_${e.id}`);
+      if(diff>=-1&&diff<=1)
+        fireNotif('prov',`🔔 Provisional class now! (P${e.period})`,`${cls}${cls&&e.subject?' · ':''}${e.subject||''}`,`${todayStr}_PV_P${e.period}_n_${e.id}`);
+    });
+  }
+
+  // 📚 HOMEWORK DUE
+  const hwCfg=getNFCfg('homework');
+  if(hwCfg.on){
+    const alertTime=parseTimeToday(hwCfg.time||'08:00');
+    if(alertTime){
+      const diff=(alertTime-now)/60000;
+      if(diff>=-1&&diff<=1){
+        const hw=getHW().filter(h=>h.status==='given'&&h.due);
+        const targetDate=new Date();targetDate.setDate(targetDate.getDate()+(hwCfg.daysBefore||1));
+        const targetStr=targetDate.toISOString().split('T')[0];
+        const due=hw.filter(h=>h.due<=targetStr);
+        if(due.length)
+          fireNotif('homework',`📚 ${due.length} homework due soon`,due.slice(0,3).map(h=>`${h.cls} — ${h.subject}: ${h.task.substring(0,40)}`).join('\n'),`${todayStr}_HW_due`);
+      }
+    }
+  }
+
+  // 📈 MARKET EXPIRY
+  const exCfg=getNFCfg('expiry');
+  if(exCfg.on){
+    // Fire once per day at 9 AM
+    const alertTime=parseTimeToday('09:00');
+    const diff=(alertTime-now)/60000;
+    if(diff>=-1&&diff<=1){
+      const allExp=[];
+      const mkt=getMkt();
+      MKT_PEOPLE.forEach(p=>{
+        mkt[p].brokers.forEach(b=>{
+          b.positions.filter(pos=>pos.expiry).forEach(pos=>{
+            const d=daysUntil(pos.expiry);
+            if(d>=0&&d<=exCfg.daysBefore)allExp.push({name:pos.stock,days:d,broker:b.name,person:p});
+          });
+        });
+      });
+      if(allExp.length)
+        fireNotif('expiry',`📈 ${allExp.length} expir${allExp.length>1?'ies':'y'} within ${exCfg.daysBefore} days`,allExp.slice(0,3).map(e=>`${MKT_LABEL[e.person]} · ${e.name} @ ${e.broker} — ${e.days}d left`).join('\n'),`${todayStr}_EXP`);
+    }
+  }
+
+  // 📊 POSITION REVIEW
+  const posCfg=getNFCfg('position');
+  if(posCfg.on){
+    const alertTime=parseTimeToday(posCfg.time||'09:00');
+    const diff=(alertTime-now)/60000;
+    if(diff>=-1&&diff<=1){
+      const mkt=getMkt();
+      let totalPos=0;
+      MKT_PEOPLE.forEach(p=>{mkt[p].brokers.forEach(b=>{totalPos+=b.positions.length;});});
+      if(totalPos>0)
+        fireNotif('position',`📊 You have ${totalPos} open position${totalPos>1?'s':''}`,`Tap to review your portfolio`,`${todayStr}_POS`);
+    }
+  }
+
+  // 🎵 SINGING
+  const sgCfg=getNFCfg('singing');
+  if(sgCfg.on){
+    const alertTime=parseTimeToday(sgCfg.time||'18:00');
+    const diff=(alertTime-now)/60000;
+    if(diff>=-1&&diff<=1){
+      const today=new Date().toISOString().split('T')[0];
+      const practiced=S.get('practices').some(p=>p.date===today);
+      if(!practiced)
+        fireNotif('singing',`🎵 Time to practice singing!`,`You haven't logged a session today yet`,`${todayStr}_SING`);
+    }
+  }
+
+  // ⏳ PENDING
+  const pgCfg=getNFCfg('pending');
+  if(pgCfg.on){
+    const alertTime=parseTimeToday(pgCfg.time||'09:00');
+    const diff=(alertTime-now)/60000;
+    if(diff>=-1&&diff<=1){
+      const pending=S.get('pending');
+      if(pending.length)
+        fireNotif('pending',`⏳ ${pending.length} pending item${pending.length>1?'s':''}`,pending.slice(0,3).map(p=>p.text).join(' · '),`${todayStr}_PEND`);
+    }
+  }
+
+  // ✅ DAILY TASKS
+  const tkCfg=getNFCfg('tasks');
+  if(tkCfg.on){
+    const alertTime=parseTimeToday(tkCfg.time||'08:00');
+    const diff=(alertTime-now)/60000;
+    if(diff>=-1&&diff<=1){
+      const today=new Date().toDateString();
+      const todayTasks=S.get('tasks').filter(t=>t.date===today);
+      if(!todayTasks.length)
+        fireNotif('tasks',`✅ Set your 3 tasks for today!`,`You haven't added any tasks yet`,`${todayStr}_TASKS`);
+    }
+  }
+}
+
+// ─ School tabs notification bar (shows routine config) ─
+function renderNotifBars(){
+  const cfg=getNFCfg('routine');
+  const denied=('Notification' in window)&&Notification.permission==='denied';
+  const noSupport=!('Notification' in window);
+  const on=cfg.on&&!denied&&!noSupport;
+  const stateText=denied?'Blocked by browser':noSupport?'Not supported':cfg.on?`Routine alerts ON · ${cfg.minsBefore===0?'at start':cfg.minsBefore+' min before'}`:'Routine alerts OFF';
+  const html=`
+    <div class="ntb-left" onclick="toggleRoutineNotif()" style="flex:1;min-width:0">
+      <span class="ntb-icon">${on?'🔔':'🔕'}</span>
+      <div style="min-width:0">
+        <div class="ntb-text">${stateText}</div>
+        <div class="ntb-sub" style="font-size:10px;color:var(--muted)">${denied||noSupport?'':'Tap to toggle · 🔔 icon above for all settings'}</div>
+      </div>
+    </div>
+    <div class="ntb-switch" onclick="toggleRoutineNotif()"><div class="ntb-knob"></div></div>`;
+  ['routine','provisional','tasks','notes'].forEach(id=>{
+    const el=document.getElementById('ntb-'+id);
+    if(!el)return;
+    el.className='notif-toggle-bar '+(on?'on':'off');
+    el.innerHTML=html;
+    el.onclick=null;
+  });
+  renderMktNotifBar();
+  renderTodayNotifBar();
+  renderTuitionNotifBar();
+  renderSingingNotifBar();
+  renderPendingNotifBar();
+}
+
+// ─ Market notification bar ─
+function renderMktNotifBar(){
+  const el=document.getElementById('ntb-market');
+  if(!el)return;
+  const cfgExp=getNFCfg('expiry');
+  const cfgPos=getNFCfg('position');
+  const denied=('Notification' in window)&&Notification.permission==='denied';
+  const noSupport=!('Notification' in window);
+  const on=(cfgExp.on||cfgPos.on)&&!denied&&!noSupport;
+  let stateText;
+  if(denied) stateText='Blocked by browser';
+  else if(noSupport) stateText='Notifications not supported';
+  else if(cfgExp.on&&cfgPos.on) stateText=`Market alerts ON · Expiry & Position review`;
+  else if(cfgExp.on) stateText=`Expiry alerts ON · Position review OFF`;
+  else if(cfgPos.on) stateText=`Position review ON · Expiry alerts OFF`;
+  else stateText='Market alerts OFF';
+  el.className='notif-toggle-bar '+(on?'on':'off');
+  el.innerHTML=`
+    <div class="ntb-left" style="flex:1;min-width:0">
+      <span class="ntb-icon">${on?'🔔':'🔕'}</span>
+      <div style="min-width:0">
+        <div class="ntb-text">${stateText}</div>
+        <div class="ntb-sub" style="font-size:10px;color:var(--muted)">${denied||noSupport?'':'Tap to toggle · 🔔 above for full settings'}</div>
+      </div>
+    </div>
+    <div class="ntb-switch"><div class="ntb-knob"></div></div>`;
+}
+
+// ─ Today (tasks) notification bar ─
+function renderTodayNotifBar(){
+  const el=document.getElementById('ntb-today');if(!el)return;
+  const cfg=getNFCfg('tasks');
+  const denied=('Notification' in window)&&Notification.permission==='denied';
+  const noSupport=!('Notification' in window);
+  const on=cfg.on&&!denied&&!noSupport;
+  let stateText;
+  if(denied) stateText='Blocked by browser';
+  else if(noSupport) stateText='Notifications not supported';
+  else stateText=cfg.on?`Task reminder ON · ${cfg.time||'08:00'}`:'Task reminder OFF';
+  el.className='notif-toggle-bar '+(on?'on':'off');
+  el.innerHTML=`
+    <div class="ntb-left" style="flex:1;min-width:0">
+      <span class="ntb-icon">${on?'🔔':'🔕'}</span>
+      <div style="min-width:0">
+        <div class="ntb-text">${stateText}</div>
+        <div class="ntb-sub" style="font-size:10px;color:var(--muted)">${denied||noSupport?'':'Tap to toggle · 🔔 above for full settings'}</div>
+      </div>
+    </div>
+    <div class="ntb-switch"><div class="ntb-knob"></div></div>`;
+}
+async function toggleTodayNotif(){
+  if(!('Notification' in window)){toast('Not supported on this browser');return;}
+  if(Notification.permission==='denied'){toast('Blocked — enable in browser settings');return;}
+  if(Notification.permission==='default'){await Notification.requestPermission();if(Notification.permission!=='granted'){renderTodayNotifBar();return;}}
+  const cfg=getNFCfg('tasks');setNFCfg('tasks',{on:!cfg.on});renderTodayNotifBar();
+  toast(cfg.on?'🔕 Task reminder OFF':'🔔 Task reminder ON');
+}
+
+// ─ Tuition (homework) notification bar ─
+function renderTuitionNotifBar(){
+  const el=document.getElementById('ntb-tuition');if(!el)return;
+  const cfg=getNFCfg('homework');
+  const denied=('Notification' in window)&&Notification.permission==='denied';
+  const noSupport=!('Notification' in window);
+  const on=cfg.on&&!denied&&!noSupport;
+  let stateText;
+  if(denied) stateText='Blocked by browser';
+  else if(noSupport) stateText='Notifications not supported';
+  else stateText=cfg.on?`Homework alerts ON · ${cfg.daysBefore||1}d before at ${cfg.time||'08:00'}`:'Homework alerts OFF';
+  el.className='notif-toggle-bar '+(on?'on':'off');
+  el.innerHTML=`
+    <div class="ntb-left" style="flex:1;min-width:0">
+      <span class="ntb-icon">${on?'🔔':'🔕'}</span>
+      <div style="min-width:0">
+        <div class="ntb-text">${stateText}</div>
+        <div class="ntb-sub" style="font-size:10px;color:var(--muted)">${denied||noSupport?'':'Tap to toggle · 🔔 above for full settings'}</div>
+      </div>
+    </div>
+    <div class="ntb-switch"><div class="ntb-knob"></div></div>`;
+}
+async function toggleTuitionNotif(){
+  if(!('Notification' in window)){toast('Not supported on this browser');return;}
+  if(Notification.permission==='denied'){toast('Blocked — enable in browser settings');return;}
+  if(Notification.permission==='default'){await Notification.requestPermission();if(Notification.permission!=='granted'){renderTuitionNotifBar();return;}}
+  const cfg=getNFCfg('homework');setNFCfg('homework',{on:!cfg.on});renderTuitionNotifBar();
+  toast(cfg.on?'🔕 Homework alerts OFF':'🔔 Homework alerts ON');
+}
+
+// ─ Singing notification bar ─
+function renderSingingNotifBar(){
+  const el=document.getElementById('ntb-singing');if(!el)return;
+  const cfg=getNFCfg('singing');
+  const denied=('Notification' in window)&&Notification.permission==='denied';
+  const noSupport=!('Notification' in window);
+  const on=cfg.on&&!denied&&!noSupport;
+  let stateText;
+  if(denied) stateText='Blocked by browser';
+  else if(noSupport) stateText='Notifications not supported';
+  else stateText=cfg.on?`Practice reminder ON · ${cfg.time||'18:00'}`:'Practice reminder OFF';
+  el.className='notif-toggle-bar '+(on?'on':'off');
+  el.innerHTML=`
+    <div class="ntb-left" style="flex:1;min-width:0">
+      <span class="ntb-icon">${on?'🔔':'🔕'}</span>
+      <div style="min-width:0">
+        <div class="ntb-text">${stateText}</div>
+        <div class="ntb-sub" style="font-size:10px;color:var(--muted)">${denied||noSupport?'':'Tap to toggle · 🔔 above for full settings'}</div>
+      </div>
+    </div>
+    <div class="ntb-switch"><div class="ntb-knob"></div></div>`;
+}
+async function toggleSingingNotif(){
+  if(!('Notification' in window)){toast('Not supported on this browser');return;}
+  if(Notification.permission==='denied'){toast('Blocked — enable in browser settings');return;}
+  if(Notification.permission==='default'){await Notification.requestPermission();if(Notification.permission!=='granted'){renderSingingNotifBar();return;}}
+  const cfg=getNFCfg('singing');setNFCfg('singing',{on:!cfg.on});renderSingingNotifBar();
+  toast(cfg.on?'🔕 Practice reminder OFF':'🔔 Practice reminder ON');
+}
+
+// ─ Pending notification bar ─
+function renderPendingNotifBar(){
+  const el=document.getElementById('ntb-pending');if(!el)return;
+  const cfg=getNFCfg('pending');
+  const denied=('Notification' in window)&&Notification.permission==='denied';
+  const noSupport=!('Notification' in window);
+  const on=cfg.on&&!denied&&!noSupport;
+  let stateText;
+  if(denied) stateText='Blocked by browser';
+  else if(noSupport) stateText='Notifications not supported';
+  else stateText=cfg.on?`Pending reminder ON · ${cfg.time||'09:00'}`:'Pending reminder OFF';
+  el.className='notif-toggle-bar '+(on?'on':'off');
+  el.innerHTML=`
+    <div class="ntb-left" style="flex:1;min-width:0">
+      <span class="ntb-icon">${on?'🔔':'🔕'}</span>
+      <div style="min-width:0">
+        <div class="ntb-text">${stateText}</div>
+        <div class="ntb-sub" style="font-size:10px;color:var(--muted)">${denied||noSupport?'':'Tap to toggle · 🔔 above for full settings'}</div>
+      </div>
+    </div>
+    <div class="ntb-switch"><div class="ntb-knob"></div></div>`;
+}
+async function togglePendingNotif(){
+  if(!('Notification' in window)){toast('Not supported on this browser');return;}
+  if(Notification.permission==='denied'){toast('Blocked — enable in browser settings');return;}
+  if(Notification.permission==='default'){await Notification.requestPermission();if(Notification.permission!=='granted'){renderPendingNotifBar();return;}}
+  const cfg=getNFCfg('pending');setNFCfg('pending',{on:!cfg.on});renderPendingNotifBar();
+  toast(cfg.on?'🔕 Pending reminder OFF':'🔔 Pending reminder ON');
+}
+
+async function toggleMarketNotif(){
+  if(!('Notification' in window)){toast('Not supported on this browser');return;}
+  if(Notification.permission==='denied'){toast('Blocked — enable in browser settings');return;}
+  if(Notification.permission==='default'){
+    await Notification.requestPermission();
+    if(Notification.permission!=='granted'){renderMktNotifBar();return;}
+  }
+  const cfgExp=getNFCfg('expiry');
+  const cfgPos=getNFCfg('position');
+  const anyOn=cfgExp.on||cfgPos.on;
+  setNFCfg('expiry',{on:!anyOn});
+  setNFCfg('position',{on:!anyOn});
+  renderMktNotifBar();
+  toast(anyOn?'🔕 Market alerts OFF':'🔔 Market alerts ON');
+}
+
+async function toggleRoutineNotif(){
+  if(!('Notification' in window)){toast('Not supported on this browser');return;}
+  if(Notification.permission==='denied'){toast('Blocked — enable in browser settings');return;}
+  if(Notification.permission==='default'){
+    await Notification.requestPermission();
+    if(Notification.permission!=='granted'){renderNotifBars();return;}
+  }
+  const cfg=getNFCfg('routine');
+  setNFCfg('routine',{on:!cfg.on});
+  renderNotifBars();
+  toast(cfg.on?'🔕 Routine alerts OFF':'🔔 Routine alerts ON');
+}
+
+// ─ Global Settings Sheet ─
+function openGlobalSettings(){
+  const featureOrder=['routine','prov','homework','expiry','position','singing','pending','tasks'];
+  openMktSheet('🔔 Notification Settings',`
+    <div style="font-size:11px;color:var(--muted);margin-bottom:12px">Each feature has its own toggle, timing and sound. Tap a feature to expand.</div>
+    ${featureOrder.map(fid=>{
+      const def=NF_DEFS[fid];
+      const cfg=getNFCfg(fid);
+      const on=cfg.on;
+      return`<div class="nf-feat-card" id="nfc-${fid}">
+        <div class="nf-feat-head" onclick="toggleNFCard('${fid}')">
+          <span class="nf-feat-emoji">${def.emoji}</span>
+          <div class="nf-feat-info">
+            <div class="nf-feat-name">${def.label}</div>
+            <div class="nf-feat-desc">${def.desc}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="ntb-switch" style="width:32px;height:18px;border-radius:9px" onclick="event.stopPropagation();toggleNFFeature('${fid}')" id="nfswitch-${fid}">
+              <div class="ntb-knob" style="width:12px;height:12px;top:3px" id="nfknob-${fid}"></div>
+            </div>
+            <span class="nf-feat-chev" id="nfchev-${fid}">⌄</span>
+          </div>
+        </div>
+        <div class="nf-feat-body" id="nfbody-${fid}">
+          ${buildNFBody(fid,cfg)}
+        </div>
+      </div>`;
+    }).join('')}
+    <div style="height:8px"></div>
+  `);
+  // apply initial switch states
+  featureOrder.forEach(fid=>_applyNFSwitchState(fid));
+}
+
+function _applyNFSwitchState(fid){
+  const cfg=getNFCfg(fid);
+  const sw=document.getElementById('nfswitch-'+fid);
+  const kn=document.getElementById('nfknob-'+fid);
+  if(!sw||!kn)return;
+  if(cfg.on){sw.style.background='var(--teal)';sw.style.border='none';kn.style.left='17px';}
+  else{sw.style.background='var(--surface)';sw.style.border='1px solid var(--border2)';kn.style.left='3px';}
+}
+
+function toggleNFCard(fid){
+  const card=document.getElementById('nfc-'+fid);
+  const chev=document.getElementById('nfchev-'+fid);
+  if(!card)return;
+  card.classList.toggle('open');
+  if(chev)chev.style.transform=card.classList.contains('open')?'rotate(180deg)':'';
+}
+
+function toggleNFFeature(fid){
+  const cfg=getNFCfg(fid);
+  setNFCfg(fid,{on:!cfg.on});
+  _applyNFSwitchState(fid);
+  // rebuild body in case state affects it
+  const body=document.getElementById('nfbody-'+fid);
+  if(body)body.innerHTML=buildNFBody(fid,getNFCfg(fid));
+  if(fid==='routine'||fid==='prov')renderNotifBars();
+  if(fid==='expiry'||fid==='position')renderMktNotifBar();
+  if(fid==='tasks')renderTodayNotifBar();
+  if(fid==='homework')renderTuitionNotifBar();
+  if(fid==='singing')renderSingingNotifBar();
+  if(fid==='pending')renderPendingNotifBar();
+  toast((cfg.on?'🔕 OFF: ':'🔔 ON: ')+NF_DEFS[fid].label);
+}
+
+function buildNFBody(fid,cfg){
+  const def=NF_DEFS[fid];
+  let html='';
+
+  // Timing controls
+  if(def.controls==='routine'){
+    html+=`<div class="nf-sub-label">Alert timing (0 = at period start)</div>
+    <div class="nf-chip-row">
+      ${[0,2,5,10,15].map(m=>`<span class="nf-chip${cfg.minsBefore===m?' sel':''}" onclick="setNFRoutineMins('${fid}',${m})" id="nfm-${fid}-${m}">${m===0?'At start':m+' min before'}</span>`).join('')}
+    </div>`;
+  } else if(def.controls==='homework'){
+    html+=`<div class="nf-sub-label">Days before due date</div>
+    <div class="nf-chip-row">
+      ${[0,1,2,3,5].map(d=>`<span class="nf-chip${cfg.daysBefore===d?' sel':''}" onclick="setNFDays('${fid}',${d})" id="nfd-${fid}-${d}">${d===0?'On due day':d+' day'+(d>1?'s':'')+'  before'}</span>`).join('')}
+    </div>
+    <div class="nf-sub-label">Alert time</div>
+    <input type="time" class="field" style="margin-bottom:8px;padding:8px 12px" value="${cfg.time||'08:00'}" onchange="setNFTime('${fid}',this.value)">`;
+  } else if(def.controls==='expiry'){
+    html+=`<div class="nf-sub-label">Alert when expiry is within</div>
+    <div class="nf-chip-row">
+      ${[3,7,14,30].map(d=>`<span class="nf-chip${cfg.daysBefore===d?' sel':''}" onclick="setNFDays('${fid}',${d})" id="nfd-${fid}-${d}">${d} days</span>`).join('')}
+    </div>`;
+  } else if(def.controls==='time'){
+    html+=`<div class="nf-sub-label">Daily alert time</div>
+    <input type="time" class="field" style="margin-bottom:8px;padding:8px 12px" value="${cfg.time||'08:00'}" onchange="setNFTime('${fid}',this.value)">`;
+  }
+
+  // Sound selector
+  html+=`<div class="nf-sub-label">Sound</div>
+  <div class="nf-chip-row">
+    ${NOTIF_SOUNDS.map(s=>`<span class="nf-chip${cfg.sound===s.id?' sel':''}" id="nfs-${fid}-${s.id}" onclick="setNFSound('${fid}','${s.id}')">${s.name}</span>`).join('')}
+  </div>
+  ${cfg.sound!=='silent'?`<button class="btn btn-ghost btn-sm" style="margin-top:8px;font-size:11px" onclick="playNotifSound('${cfg.sound||'bell'}')">▶ Preview sound</button>`:''}`;
+
+  return html;
+}
+
+function setNFRoutineMins(fid,m){
+  setNFCfg(fid,{minsBefore:m});
+  document.querySelectorAll(`[id^="nfm-${fid}-"]`).forEach(el=>{
+    const val=Number(el.id.split('-').pop());
+    el.className='nf-chip'+(val===m?' sel':'');
+  });
+  if(fid==='routine'||fid==='prov')renderNotifBars();
+}
+function setNFDays(fid,d){
+  setNFCfg(fid,{daysBefore:d});
+  document.querySelectorAll(`[id^="nfd-${fid}-"]`).forEach(el=>{
+    const val=Number(el.id.split('-').pop());
+    el.className='nf-chip'+(val===d?' sel':'');
+  });
+}
+function setNFTime(fid,v){setNFCfg(fid,{time:v});}
+function setNFSound(fid,id){
+  setNFCfg(fid,{sound:id});
+  document.querySelectorAll(`[id^="nfs-${fid}-"]`).forEach(el=>{
+    const val=el.id.split('-').pop();
+    el.className='nf-chip'+(val===id?' sel':'');
+  });
+  if(id!=='silent')playNotifSound(id);
+}
+
+// ─ Old school-only toggle (kept for school tab buttons) ─
+function openNotifSettings(){openGlobalSettings();}
+
+async function initNotifications(){
+  if(!('Notification' in window)){renderNotifBars();return;}
+  if(Notification.permission==='default'){
+    try{await Notification.requestPermission();}catch(e){}
+  }
+  renderNotifBars();
+  renderMktNotifBar();
+  renderTodayNotifBar();
+  renderTuitionNotifBar();
+  renderSingingNotifBar();
+  renderPendingNotifBar();
+  setInterval(checkAllNotifications,30000);
+  setTimeout(checkAllNotifications,3000);
+}
+
+// ── Monthly Backup Reminder ───────────────────────────────────
+function checkBackupReminder(){
+  const BACKUP_KEY='last_backup_reminder';
+  const last=localStorage.getItem(BACKUP_KEY);
+  const now=Date.now();
+  const thirtyDays=30*24*60*60*1000;
+  if(!last||now-Number(last)>thirtyDays){
+    setTimeout(()=>{
+      showBackupBanner();
+    },3000); // show 3 seconds after load
+  }
+}
+
+function showBackupBanner(){
+  // Don't show if already dismissed this session
+  if(window._backupBannerShown)return;
+  window._backupBannerShown=true;
+
+  const banner=document.createElement('div');
+  banner.id='backupBanner';
+  banner.style.cssText=`
+    position:fixed;bottom:calc(var(--sb) + 68px);left:12px;right:12px;
+    background:var(--surface);border:1px solid rgba(45,224,176,.35);
+    border-radius:16px;padding:14px 16px;z-index:9998;
+    box-shadow:0 8px 32px rgba(0,0,0,.4);
+    animation:slideUp .3s ease;
+  `;
+  banner.innerHTML=`
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <span style="font-size:24px;flex-shrink:0">💾</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px">Monthly Backup Reminder</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.4">It's been a while! Export your data so you don't lose students, routine, market positions or homework.</div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button onclick="exportData();dismissBackupBanner()" style="flex:1;background:rgba(45,224,176,.14);color:var(--teal);border:1px solid rgba(45,224,176,.3);border-radius:8px;padding:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--fb)">⬇ Export Now</button>
+          <button onclick="dismissBackupBanner()" style="background:transparent;color:var(--muted);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;font-size:12px;cursor:pointer;font-family:var(--fb)">Later</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(banner);
+}
+
+function dismissBackupBanner(){
+  localStorage.setItem('last_backup_reminder',String(Date.now()));
+  const el=document.getElementById('backupBanner');
+  if(el){
+    el.style.opacity='0';
+    el.style.transform='translateY(20px)';
+    el.style.transition='all .25s';
+    setTimeout(()=>el.remove(),300);
+  }
+}
+
+// ── Init ──────────────────────────────────────────────────────
+const THEMES=[
+  {id:'teal',  name:'Dark Teal',   desc:'Default dark',   bg:'#0e0f13',accent:'#2de0b0'},
+  {id:'amber', name:'Warm Amber',  desc:'Warm golden',    bg:'#12100a',accent:'#f5a623'},
+  {id:'purple',name:'Midnight',    desc:'Deep purple',    bg:'#0d0b14',accent:'#a78bfa'},
+  {id:'light', name:'Daylight',    desc:'Light & clean',  bg:'#f4f5f7',accent:'#0d9e7e'},
+];
+function getTheme(){return localStorage.getItem('app_theme')||'teal';}
+function applyTheme(id){
+  document.documentElement.setAttribute('data-theme',id);
+  localStorage.setItem('app_theme',id);
+  const t=THEMES.find(x=>x.id===id);
+  if(t)document.querySelector('meta[name="theme-color"]').setAttribute('content',t.bg);
+}
+function openThemePicker(){
+  const cur=getTheme();
+  openMktSheet('🎨 Theme & Data',`
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Choose your preferred look</div>
+    <div class="theme-grid">
+      ${THEMES.map(t=>`
+        <div class="theme-swatch${cur===t.id?' selected':''}" style="background:${t.bg}" onclick="pickTheme('${t.id}')">
+          <div class="ts-preview" style="background:rgba(255,255,255,0.07)">
+            <div class="ts-dot" style="background:${t.accent}"></div>
+            <div class="ts-dot" style="background:${t.accent};opacity:.5;width:7px;height:7px"></div>
+            <div class="ts-dot" style="background:${t.accent};opacity:.25;width:5px;height:5px"></div>
+          </div>
+          <div class="ts-name" style="color:${t.id==='light'?'#1a1d27':'#e8e9f0'}">${t.name}</div>
+          <div class="ts-desc" style="color:${t.id==='light'?'#8892a4':'#676a7a'}">${t.desc}</div>
+        </div>`).join('')}
+    </div>
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+      <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">💾 Data Backup</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">All your data is stored locally. Export it as a backup file — especially important before clearing browser data.</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-teal" style="flex:1;font-size:13px" onclick="exportData()">⬇ Export Backup</button>
+        <button class="btn btn-ghost" style="flex:1;font-size:13px" onclick="document.getElementById('importFile').click()">⬆ Import</button>
+      </div>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(this)">
+    </div>
+  `);
+}
+function pickTheme(id){
+  applyTheme(id);
+  closeMktSheet();
+  setTimeout(()=>openThemePicker(),120);
+}
+
+function exportData(){
+  const keys=['tasks','students','tuitionNotes','trades','marketNotes','schoolTasks','schoolNotesText',
+    'practices','songGoals','pending','diary','energy_today',
+    'school_routine_v1','school_prov_v1','school_period_times_v1',
+    'mkt_v2','tuition_homework_v1','app_theme',
+    'nf_routine','nf_prov','nf_homework','nf_expiry','nf_position','nf_singing','nf_pending','nf_tasks'];
+  const data={_version:1,_exported:new Date().toISOString(),_app:'MyWorkspace-JayantaMondal'};
+  keys.forEach(k=>{const v=localStorage.getItem(k);if(v!==null)data[k]=v;});
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='MyWorkspace_backup_'+new Date().toISOString().split('T')[0]+'.json';
+  a.click();
+  toast('Backup downloaded ✓');
+}
+
+function importData(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data._app||!data._version){toast('Invalid backup file');return;}
+      if(!confirm('This will overwrite all your current data. Continue?'))return;
+      Object.keys(data).filter(k=>!k.startsWith('_')).forEach(k=>localStorage.setItem(k,data[k]));
+      toast('Data restored ✓ — reloading...');
+      setTimeout(()=>location.reload(),1200);
+    }catch{toast('Could not read backup file');}
+  };
+  reader.readAsText(file);
+  input.value='';
+}
+
+// ── Homework Tracker ──────────────────────────────────────────
+const HW_KEY='tuition_homework_v1';
+function getHW(){try{return JSON.parse(localStorage.getItem(HW_KEY))||[];}catch{return[];}}
+function saveHW(d){localStorage.setItem(HW_KEY,JSON.stringify(d));}
+
+function openAddHomework(){
+  const students=S.get('students');
+  const classes=[...new Set(students.map(s=>s.cls))].sort();
+  const classOpts=classes.length
+    ?classes.map(c=>`<option value="${c}">${c}</option>`).join('')
+    :'<option value="Class 8">Class 8</option><option value="Class 9">Class 9</option><option value="Class 10">Class 10</option><option value="Class 11">Class 11</option><option value="Class 12">Class 12</option>';
+  const today=new Date().toISOString().split('T')[0];
+  openMktSheet('📚 Add Homework',`
+    <select class="field" id="hwClass">${classOpts}</select>
+    <select class="field" id="hwSubject">
+      <option>English</option><option>Maths</option><option>Physics</option><option>Chemistry</option><option>Biology</option><option>History</option><option>Geography</option><option>Other</option>
+    </select>
+    <textarea class="field" id="hwTask" placeholder="Homework description (e.g. Ex 3.2 Q1–Q10, write essay on...)" style="min-height:70px"></textarea>
+    <div style="margin-bottom:4px"><label style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.8px">Due Date</label></div>
+    <input class="field" type="date" id="hwDue" value="${today}">
+    <button class="btn btn-teal btn-full" onclick="submitHomework()">Add Homework</button>
+  `);
+  setTimeout(()=>document.getElementById('hwTask')?.focus(),200);
+}
+
+function submitHomework(){
+  const cls=(document.getElementById('hwClass').value||'').trim();
+  const subject=(document.getElementById('hwSubject').value||'').trim();
+  const task=(document.getElementById('hwTask').value||'').trim();
+  const due=document.getElementById('hwDue').value;
+  if(!task){toast('Enter homework description');return;}
+  const hw=getHW();
+  hw.push({id:Date.now(),cls,subject,task,due,status:'given',addedDate:new Date().toISOString().split('T')[0]});
+  saveHW(hw);
+  closeMktSheet();
+  renderHomework();
+  toast('Homework added ✓');
+}
+
+function cycleHWStatus(id){
+  const hw=getHW();
+  const x=hw.find(h=>h.id===id);
+  if(!x)return;
+  x.status=x.status==='given'?'checked':'given';
+  saveHW(hw);renderHomework();
+}
+
+function deleteHW(id){
+  saveHW(getHW().filter(h=>h.id!==id));
+  renderHomework();
+}
+
+function shareHWOnWhatsApp(cls){
+  const hw=getHW().filter(h=>h.cls===cls&&h.status==='given');
+  if(!hw.length){toast('No pending homework for '+cls);return;}
+  const dateStr=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
+  let msg=`📚 *${cls} Homework — ${dateStr}*\n\n`;
+  hw.forEach((h,i)=>{
+    msg+=`*${i+1}. ${h.subject}*\n${h.task}`;
+    if(h.due)msg+=`\n📅 Due: ${new Date(h.due+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'})}`;
+    msg+='\n\n';
+  });
+  msg+='_Kindly complete and bring to the next class._';
+  const url='https://wa.me/?text='+encodeURIComponent(msg);
+  window.open(url,'_blank');
+}
+
+function renderHomework(){
+  const hw=getHW();
+  const el=document.getElementById('hwClassList');
+  if(!el)return;
+  // group by class
+  const byClass={};
+  hw.forEach(h=>{if(!byClass[h.cls])byClass[h.cls]=[];byClass[h.cls].push(h);});
+  const classes=Object.keys(byClass).sort();
+  if(!classes.length){
+    el.innerHTML='<div class="empty"><div class="empty-icon">📚</div>No homework yet<br><small style="font-size:11px">Tap + Add to assign classwise homework</small></div>';
+    return;
+  }
+  el.innerHTML=classes.map(cls=>{
+    const entries=byClass[cls];
+    const pending=entries.filter(h=>h.status==='given').length;
+    const done=entries.filter(h=>h.status==='checked').length;
+    const blockId='hw-block-'+cls.replace(/\s/g,'_');
+    return`<div class="hw-class-block" id="${blockId}">
+      <div class="hw-class-head" onclick="document.getElementById('${blockId}').classList.toggle('open')">
+        <div style="flex:1;min-width:0">
+          <div class="hw-class-name">${cls}</div>
+          <div class="hw-class-meta">${pending} pending · ${done} checked</div>
+        </div>
+        <span class="badge ${pending?'b-amber':'b-teal'}" style="margin-right:6px">${pending?pending+' due':'All done ✓'}</span>
+        <span class="hw-class-chevron">⌄</span>
+      </div>
+      <div class="hw-class-body">
+        ${entries.map(h=>`
+          <div class="hw-entry">
+            <div class="hw-entry-info">
+              <div class="hw-entry-sub">${h.subject}</div>
+              <div class="hw-entry-task">${h.task}</div>
+              <div class="hw-entry-meta">Added ${h.addedDate}${h.due?' · Due: '+new Date(h.due+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'}):''}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0">
+              <button class="hw-status-btn ${h.status}" onclick="cycleHWStatus(${h.id})">${h.status==='given'?'📝 Given':'✅ Checked'}</button>
+              <button class="del" onclick="deleteHW(${h.id})">×</button>
+            </div>
+          </div>`).join('')}
+        <button class="hw-wa-btn" onclick="shareHWOnWhatsApp('${cls}')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Share on WhatsApp Status
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Themes ────────────────────────────────────────────────────
+function init(){
+  applyTheme(getTheme());
+  initHeader();
+  renderTasks();renderTodayStats();renderTodayHighlights();
+  renderStudents();renderTuitionNotes();renderHomework();
+  renderMktSummary();
+  const _td=todayDayName();if(_td)_schDay=_td;
+  renderSchRoutine();
+  renderProvList();
+  renderSchoolTasks();
+  renderPractices();renderSongGoals();
+  renderPending();
+  const sn=localStorage.getItem('schoolNotesText');
+  if(sn)document.getElementById('schoolNotes').value=sn;
+  const today=new Date().toISOString().split('T')[0];
+  ['practiceDate','provDate'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=today;});
+  const en=S.getObj('energy_today');
+  if(en.date===new Date().toDateString()&&en.level)setEnergy(en.level);
+  initNotifications();
+  checkBackupReminder();
+  scheduleStickyCheck();
+}
+init();
+</script>
+</body>
+</html>
